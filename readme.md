@@ -41,8 +41,8 @@ We used a "Type-Based" structure to keep things organized and scalable:
    npx expo start
 
 3. **Open the app:**
-* **Mobile:** Scan the QR code with the **Expo Go** app.
-* **Web:** Press `w` in the terminal to launch in browser.
+    * **Mobile:** Scan the QR code with the **Expo Go** app.
+    * **Web:** Press `w` in the terminal to launch in browser.
 
 ### 📝 User Roles
 | Role | Permissions |
