@@ -24,7 +24,8 @@ We used a "Type-Based" structure to keep things organized and scalable:
 ### 🛠 Tech Stack
 * **Frontend:** React Native + Expo + TypeScript.
 * **Navigation:** React Navigation (Stack).
-* **Backend:** [Insert your Backend here - e.g. Node.js / Firebase].
+* **Backend:**  Node.js / Express / MySql.
+* **API:** Axios
 * **Icons:** Lucide-react-native.
 
 ---
