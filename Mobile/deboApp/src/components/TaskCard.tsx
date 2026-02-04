@@ -1,21 +1,25 @@
 import React from 'react';
-import { View, Text, StyleSheet } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
+import { Link } from 'expo-router';
 
 interface TaskCardProps {
+  id: string;
   title: string;
   projectName: string;
   dueDate: string;
   status: number;
 }
 
-const TaskCard: React.FC<TaskCardProps> = ({ title, projectName, dueDate, status }) => {
+const TaskCard: React.FC<TaskCardProps> = ({ id, title, projectName, dueDate, status }) => {
   return (
-    <View style={styles.card}>
-      <Text style={styles.title}>{title}</Text>
-      <Text style={styles.projectName}>{projectName}</Text>
-      <Text style={styles.dueDate}>Due: {dueDate}</Text>
-      <Text style={styles.status}>Status: {status}%</Text>
-    </View>
+    <Link href={`/(tabs)/task/${id}`} asChild>
+      <TouchableOpacity style={styles.card}>
+        <Text style={styles.title}>{title}</Text>
+        <Text style={styles.projectName}>{projectName}</Text>
+        <Text style={styles.dueDate}>Due: {dueDate}</Text>
+        <Text style={styles.status}>Status: {status}%</Text>
+      </TouchableOpacity>
+    </Link>
   );
 };
 

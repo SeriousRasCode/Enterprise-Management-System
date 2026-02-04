@@ -39,6 +39,7 @@ const DashboardScreen = () => {
         data={tasks}
         renderItem={({ item }) => (
           <TaskCard
+            id={item.id}
             title={item.title}
             projectName={item.projectName}
             dueDate={item.dueDate}
