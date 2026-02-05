@@ -1,7 +1,4 @@
-import * as zustand from 'zustand';
-
-// Support environments where zustand is exported as CommonJS or ESM.
-const create: typeof import('zustand').default = (zustand as any).default ?? (zustand as any).create ?? (zustand as any);
+import { create } from 'zustand';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import api from '../services/api';
 
@@ -17,7 +14,7 @@ interface AuthState {
   token: string | null;
   isAuthenticated: boolean;
   user: User | null; // Replace 'any' with a proper user type
-  login: (email, password) => Promise<void>;
+  login: (email: string, password: string) => Promise<void>;
   logout: () => void;
   checkAuth: () => Promise<void>;
 }
