@@ -59,7 +59,7 @@ const TaskDetailScreen: React.FC<TaskDetailScreenProps> = ({ taskId }) => {
   return (
     <>
       <ActionBar title={currentTask.title} showBack onBack={() => router.back()} />
-      <View style={[styles.container, { paddingTop: ACTION_BAR_HEIGHT + 12 }]}>
+      <View style={[styles.container, { paddingTop: ACTION_BAR_HEIGHT  }]}>
       <View style={[styles.card]}>
         <Text style={styles.title}>{currentTask.title}</Text>
         <Text style={styles.projectName}>{currentTask.projectName}</Text>
@@ -90,7 +90,7 @@ const TaskDetailScreen: React.FC<TaskDetailScreenProps> = ({ taskId }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    padding: 16,
+    padding: 10,
     backgroundColor: '#f5f5f5',
   },
   centered: {

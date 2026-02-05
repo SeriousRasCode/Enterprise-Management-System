@@ -13,7 +13,7 @@ type Props = {
   onBack?: () => void;
 };
 
-export const ACTION_BAR_HEIGHT = 56;
+export const ACTION_BAR_HEIGHT = 10;
 
 export default function ActionBar({ title, style, children, showBack, onBack }: Props) {
   return (
@@ -33,7 +33,7 @@ export default function ActionBar({ title, style, children, showBack, onBack }: 
         <View style={styles.center} pointerEvents="none">
           {title ? <Text style={styles.title} numberOfLines={1}>{title}</Text> : null}
         </View>
-        <View style={styles.right} pointerEvents="box-none">
+        <View style={styles.left} pointerEvents="box-none">
           {children}
         </View>
       </LinearGradient>

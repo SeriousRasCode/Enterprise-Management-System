@@ -36,7 +36,7 @@ const DashboardScreen = () => {
   return (
     <>
       <ActionBar title="Dashboard" />
-      <View style={[styles.container, { paddingTop: ACTION_BAR_HEIGHT + 12 }]}>
+      <View style={[styles.container, { paddingTop: 0 }]}>
       <View style={styles.content}>
       <FlatList
         data={tasks}
@@ -69,7 +69,7 @@ const DashboardScreen = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    padding: 16,
+    padding: 10,
   },
   title: {
     fontSize: 24,

@@ -10,7 +10,7 @@ const ProfileScreen = () => {
   return (
     <>
       <ActionBar title="Profile" />
-      <View style={[styles.container, { paddingTop: ACTION_BAR_HEIGHT + 12 }]}>
+      <View style={[styles.container, { paddingTop: 0 }]}>
       <View style={styles.content}>
         {user ? (
           <View style={styles.card}>
@@ -41,7 +41,7 @@ const ProfileScreen = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    padding: 16,
+    padding: 10,
   },
   title: {
     fontSize: 24,
