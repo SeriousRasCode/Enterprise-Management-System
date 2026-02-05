@@ -34,7 +34,7 @@ const TaskDetailScreen: React.FC<TaskDetailScreenProps> = ({ taskId }) => {
 
   if (loadingCurrentTask) {
     return (
-      <View style={styles.centered}>
+      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
         <ActivityIndicator size="large" />
       </View>
     );
@@ -42,7 +42,7 @@ const TaskDetailScreen: React.FC<TaskDetailScreenProps> = ({ taskId }) => {
 
   if (error || !currentTask) {
     return (
-      <View style={styles.centered}>
+      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
         <Text>Task not found.</Text>
       </View>
     );
@@ -83,6 +83,7 @@ const TaskDetailScreen: React.FC<TaskDetailScreenProps> = ({ taskId }) => {
         </View>
       </View>
     </View>
+    </>
   );
 };
 
