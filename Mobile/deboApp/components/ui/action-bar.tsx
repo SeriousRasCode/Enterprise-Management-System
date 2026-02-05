@@ -13,6 +13,8 @@ type Props = {
   onBack?: () => void;
 };
 
+export const ACTION_BAR_HEIGHT = 56;
+
 export default function ActionBar({ title, style, children, showBack, onBack }: Props) {
   return (
     <SafeAreaView edges={["top"]} style={[styles.safe]}>

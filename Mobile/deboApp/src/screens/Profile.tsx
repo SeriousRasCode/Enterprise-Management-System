@@ -1,7 +1,7 @@
 import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 import useAuthStore from '@/src/context/AuthStore';
-import ActionBar from '@/components/ui/action-bar';
+import ActionBar, { ACTION_BAR_HEIGHT } from '@/components/ui/action-bar';
 import Button from '@/components/ui/button';
 
 const ProfileScreen = () => {
@@ -10,7 +10,7 @@ const ProfileScreen = () => {
   return (
     <>
       <ActionBar title="Profile" />
-      <View style={styles.container}>
+      <View style={[styles.container, { paddingTop: ACTION_BAR_HEIGHT + 12 }]}>
       <View style={styles.content}>
         {user ? (
           <View style={styles.card}>

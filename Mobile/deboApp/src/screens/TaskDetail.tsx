@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { View, Text, StyleSheet, ActivityIndicator } from 'react-native';
-import ActionBar from '@/components/ui/action-bar';
+import ActionBar, { ACTION_BAR_HEIGHT } from '@/components/ui/action-bar';
 import { useRouter } from 'expo-router';
 import Button from '@/components/ui/button';
 import Slider from '@react-native-community/slider';
@@ -59,8 +59,8 @@ const TaskDetailScreen: React.FC<TaskDetailScreenProps> = ({ taskId }) => {
   return (
     <>
       <ActionBar title={currentTask.title} showBack onBack={() => router.back()} />
-      <View style={styles.container}>
-      <View style={[styles.card, { marginTop: 12 }]}>
+      <View style={[styles.container, { paddingTop: ACTION_BAR_HEIGHT + 12 }]}>
+      <View style={[styles.card]}>
         <Text style={styles.title}>{currentTask.title}</Text>
         <Text style={styles.projectName}>{currentTask.projectName}</Text>
         <Text style={styles.dueDate}>Due: {currentTask.dueDate}</Text>

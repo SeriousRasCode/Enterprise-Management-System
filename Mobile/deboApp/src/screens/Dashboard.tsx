@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useCallback } from 'react';
 import { View, Text, StyleSheet, FlatList, ActivityIndicator, RefreshControl } from 'react-native';
-import ActionBar from '@/components/ui/action-bar';
+import ActionBar, { ACTION_BAR_HEIGHT } from '@/components/ui/action-bar';
 import useTaskStore from '@/src/context/TaskStore';
 import TaskCard from '@/src/components/TaskCard';
 
@@ -36,7 +36,7 @@ const DashboardScreen = () => {
   return (
     <>
       <ActionBar title="Dashboard" />
-      <View style={styles.container}>
+      <View style={[styles.container, { paddingTop: ACTION_BAR_HEIGHT + 12 }]}>
       <View style={styles.content}>
       <FlatList
         data={tasks}
