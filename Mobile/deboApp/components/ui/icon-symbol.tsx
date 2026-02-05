@@ -39,5 +39,6 @@ export function IconSymbol({
   style?: StyleProp<TextStyle>;
   weight?: SymbolWeight;
 }) {
-  return <MaterialIcons color={color} size={size} name={MAPPING[name]} style={style} />;
+  const mapped = (MAPPING as Record<string, string>)[name as string] ?? 'help-outline';
+  return <MaterialIcons color={color} size={size} name={mapped as any} style={style} />;
 }

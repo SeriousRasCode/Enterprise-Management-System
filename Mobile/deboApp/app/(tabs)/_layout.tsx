@@ -13,7 +13,19 @@ export default function TabLayout() {
         tabBarInactiveTintColor: Colors.light.tabIconDefault,
         headerShown: false,
         tabBarButton: HapticTab,
-        tabBarStyle: { backgroundColor: Colors.light.background, borderTopColor: Colors.light.tint },
+        tabBarShowLabel: true,
+        tabBarLabelPosition: 'below-icon',
+        tabBarStyle: {
+          backgroundColor: Colors.light.background,
+          borderTopWidth: 0,
+          height: 64,
+          paddingBottom: 8,
+          elevation: 8,
+          shadowColor: '#000',
+          shadowOpacity: 0.08,
+          shadowRadius: 6,
+        },
+        tabBarItemStyle: { paddingTop: 6 },
       }}>
       <Tabs.Screen
         name="index"
@@ -36,13 +48,7 @@ export default function TabLayout() {
           tabBarIcon: ({ color }) => <IconSymbol size={28} name="person.fill" color={color} />,
         }}
       />
-      <Tabs.Screen
-        name="explore"
-        options={{
-          headerShown: false,
-          tabBarButton: () => null,
-        }}
-      />
+      {/* keep hidden routes out of tab bar by not providing a tab entry here */}
     </Tabs>
   );
 }
