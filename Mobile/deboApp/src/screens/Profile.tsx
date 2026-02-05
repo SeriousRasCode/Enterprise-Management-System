@@ -1,13 +1,14 @@
 import React from 'react';
 import { View, Text, Button, StyleSheet } from 'react-native';
 import useAuthStore from '@/src/context/AuthStore';
+import ActionBar from '@/components/ui/action-bar';
 
 const ProfileScreen = () => {
   const { user, logout } = useAuthStore();
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Profile</Text>
+      <ActionBar title="Profile" />
       {user && (
         <View style={styles.userInfoContainer}>
           <Text style={styles.label}>Name:</Text>
