@@ -1,5 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { View, Text, StyleSheet, ActivityIndicator } from 'react-native';
+import ActionBar from '@/components/ui/action-bar';
+import { useRouter } from 'expo-router';
 import Button from '@/components/ui/button';
 import Slider from '@react-native-community/slider';
 import useTaskStore from '@/src/context/TaskStore';
@@ -9,6 +11,7 @@ interface TaskDetailScreenProps {
 }
 
 const TaskDetailScreen: React.FC<TaskDetailScreenProps> = ({ taskId }) => {
+  const router = useRouter();
   const {
     currentTask,
     loadingCurrentTask,
@@ -55,7 +58,8 @@ const TaskDetailScreen: React.FC<TaskDetailScreenProps> = ({ taskId }) => {
 
   return (
     <View style={styles.container}>
-      <View style={styles.card}>
+      <ActionBar title={currentTask.title} showBack onBack={() => router.back()} />
+      <View style={[styles.card, { marginTop: 12 }]}>
         <Text style={styles.title}>{currentTask.title}</Text>
         <Text style={styles.projectName}>{currentTask.projectName}</Text>
         <Text style={styles.dueDate}>Due: {currentTask.dueDate}</Text>
