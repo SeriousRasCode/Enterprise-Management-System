@@ -34,8 +34,9 @@ const DashboardScreen = () => {
   }
 
   return (
-    <View style={styles.container}>
+    <>
       <ActionBar title="Dashboard" />
+      <View style={styles.container}>
       <View style={styles.content}>
       <FlatList
         data={tasks}
@@ -60,7 +61,8 @@ const DashboardScreen = () => {
         }
       />
       </View>
-    </View>
+      </View>
+    </>
   );
 };
 
