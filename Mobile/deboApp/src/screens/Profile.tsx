@@ -8,8 +8,9 @@ const ProfileScreen = () => {
   const { user, logout } = useAuthStore();
 
   return (
-    <View style={styles.container}>
+    <>
       <ActionBar title="Profile" />
+      <View style={styles.container}>
       <View style={styles.content}>
         {user ? (
           <View style={styles.card}>
@@ -32,7 +33,8 @@ const ProfileScreen = () => {
           <Button title="Logout" onPress={logout} />
         </View>
       </View>
-    </View>
+      </View>
+    </>
   );
 };
 
