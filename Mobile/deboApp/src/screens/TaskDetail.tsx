@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, StyleSheet, ActivityIndicator, Button } from 'react-native';
+import { View, Text, StyleSheet, ActivityIndicator } from 'react-native';
+import Button from '@/components/ui/button';
 import Slider from '@react-native-community/slider';
 import useTaskStore from '@/src/context/TaskStore';
 
@@ -71,8 +72,8 @@ const TaskDetailScreen: React.FC<TaskDetailScreenProps> = ({ taskId }) => {
             onSlidingComplete={saveStatus}
           />
           <View style={styles.buttonsContainer}>
-            <Button title="Started" onPress={() => updateTaskStatus(taskId, 50)} />
-            <Button title="Completed" onPress={() => updateTaskStatus(taskId, 100)} />
+            <Button title="Started" onPress={() => updateTaskStatus(taskId, 50)} style={{ flex: 1, marginRight: 8 }} />
+            <Button title="Completed" onPress={() => updateTaskStatus(taskId, 100)} style={{ flex: 1, marginLeft: 8 }} />
           </View>
         </View>
       </View>

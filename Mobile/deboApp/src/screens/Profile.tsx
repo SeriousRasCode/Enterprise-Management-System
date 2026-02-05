@@ -1,7 +1,8 @@
 import React from 'react';
-import { View, Text, Button, StyleSheet } from 'react-native';
+import { View, Text, StyleSheet } from 'react-native';
 import useAuthStore from '@/src/context/AuthStore';
 import ActionBar from '@/components/ui/action-bar';
+import Button from '@/components/ui/button';
 
 const ProfileScreen = () => {
   const { user, logout } = useAuthStore();

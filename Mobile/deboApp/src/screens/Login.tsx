@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, Button, StyleSheet, Alert } from 'react-native';
+import { View, Text, StyleSheet, Alert } from 'react-native';
 import useAuthStore from '@/src/context/AuthStore';
+import Input from '@/components/ui/input';
+import Button from '@/components/ui/button';
 
 const LoginScreen = () => {
   const [email, setEmail] = useState('');
@@ -23,22 +25,20 @@ const LoginScreen = () => {
     <View style={styles.container}>
       <View style={styles.card}>
         <Text style={styles.title}>Login</Text>
-        <TextInput
-          style={styles.input}
+        <Input
           placeholder="Email"
           keyboardType="email-address"
           autoCapitalize="none"
           value={email}
           onChangeText={setEmail}
         />
-        <TextInput
-          style={styles.input}
+        <Input
           placeholder="Password"
           secureTextEntry
           value={password}
           onChangeText={setPassword}
         />
-        <Button title={loading ? 'Logging in...' : 'Login'} onPress={handleLogin} disabled={loading} />
+        <Button title={loading ? 'Logging in...' : 'Login'} onPress={handleLogin} loading={loading} />
       </View>
     </View>
   );
