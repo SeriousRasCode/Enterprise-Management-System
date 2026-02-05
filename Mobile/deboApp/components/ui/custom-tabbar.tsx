@@ -9,6 +9,10 @@ export default function CustomTabBar({ state, descriptors, navigation }: BottomT
     <SafeAreaView edges={["bottom"]} style={styles.safe}>
       <View style={styles.container}>
         {state.routes.map((route, index) => {
+          // Only display top-level tabs we intentionally added to the layout
+          const allowed = ['index', 'task', 'profile'];
+          if (!allowed.includes(route.name)) return null;
+
           const isFocused = state.index === index;
           const descriptor = descriptors[route.key];
           const { options } = descriptor;

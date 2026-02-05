@@ -36,6 +36,7 @@ const DashboardScreen = () => {
   return (
     <View style={styles.container}>
       <ActionBar title="Dashboard" />
+      <View style={styles.content}>
       <FlatList
         data={tasks}
         renderItem={({ item }) => (
@@ -58,6 +59,7 @@ const DashboardScreen = () => {
           </View>
         }
       />
+      </View>
     </View>
   );
 };
@@ -79,6 +81,11 @@ const styles = StyleSheet.create({
   },
   list: {
     paddingBottom: 16,
+    paddingTop: 8,
+  },
+  content: {
+    flex: 1,
+    marginTop: 12,
   },
 });
 
