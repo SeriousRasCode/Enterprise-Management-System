@@ -10,19 +10,28 @@ const ProfileScreen = () => {
   return (
     <View style={styles.container}>
       <ActionBar title="Profile" />
-      {user && (
-        <View style={styles.userInfoContainer}>
-          <Text style={styles.label}>Name:</Text>
-          <Text style={styles.info}>{user.name}</Text>
-          <Text style={styles.label}>Email:</Text>
-          <Text style={styles.info}>{user.email}</Text>
-          <Text style={styles.label}>Role:</Text>
-          <Text style={styles.info}>{user.role}</Text>
-          <Text style={styles.label}>Team:</Text>
-          <Text style={styles.info}>{user.team}</Text>
+      <View style={styles.content}>
+        {user ? (
+          <View style={styles.card}>
+            <Text style={styles.label}>Name</Text>
+            <Text style={styles.info}>{user.name}</Text>
+            <Text style={styles.label}>Email</Text>
+            <Text style={styles.info}>{user.email}</Text>
+            <Text style={styles.label}>Role</Text>
+            <Text style={styles.info}>{user.role}</Text>
+            <Text style={styles.label}>Team</Text>
+            <Text style={styles.info}>{user.team}</Text>
+          </View>
+        ) : (
+          <View style={styles.card}>
+            <Text style={styles.info}>Not signed in</Text>
+          </View>
+        )}
+
+        <View style={styles.logoutContainer}>
+          <Button title="Logout" onPress={logout} />
         </View>
-      )}
-      <Button title="Logout" onPress={logout} />
+      </View>
     </View>
   );
 };
@@ -37,8 +46,23 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     marginBottom: 24,
   },
-  userInfoContainer: {
-    marginBottom: 24,
+  content: {
+    flex: 1,
+    marginTop: 12,
+  },
+  card: {
+    backgroundColor: '#fff',
+    padding: 16,
+    borderRadius: 8,
+    marginBottom: 16,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.06,
+    shadowRadius: 4,
+    elevation: 2,
+  },
+  logoutContainer: {
+    marginTop: 12,
   },
   label: {
     fontSize: 16,
