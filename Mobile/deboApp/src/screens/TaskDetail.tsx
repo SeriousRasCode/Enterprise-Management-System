@@ -54,24 +54,26 @@ const TaskDetailScreen: React.FC<TaskDetailScreenProps> = ({ taskId }) => {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>{currentTask.title}</Text>
-      <Text style={styles.projectName}>{currentTask.projectName}</Text>
-      <Text style={styles.dueDate}>Due: {currentTask.dueDate}</Text>
+      <View style={styles.card}>
+        <Text style={styles.title}>{currentTask.title}</Text>
+        <Text style={styles.projectName}>{currentTask.projectName}</Text>
+        <Text style={styles.dueDate}>Due: {currentTask.dueDate}</Text>
 
-      <View style={styles.statusContainer}>
-        <Text style={styles.statusText}>Status: {Math.round(status)}%</Text>
-        <Slider
-          style={styles.slider}
-          minimumValue={0}
-          maximumValue={100}
-          step={1}
-          value={status}
-          onValueChange={handleStatusChange}
-          onSlidingComplete={saveStatus}
-        />
-        <View style={styles.buttonsContainer}>
-          <Button title="Started" onPress={() => updateTaskStatus(taskId, 50)} />
-          <Button title="Completed" onPress={() => updateTaskStatus(taskId, 100)} />
+        <View style={styles.statusContainer}>
+          <Text style={styles.statusText}>Status: {Math.round(status)}%</Text>
+          <Slider
+            style={styles.slider}
+            minimumValue={0}
+            maximumValue={100}
+            step={1}
+            value={status}
+            onValueChange={handleStatusChange}
+            onSlidingComplete={saveStatus}
+          />
+          <View style={styles.buttonsContainer}>
+            <Button title="Started" onPress={() => updateTaskStatus(taskId, 50)} />
+            <Button title="Completed" onPress={() => updateTaskStatus(taskId, 100)} />
+          </View>
         </View>
       </View>
     </View>
@@ -82,38 +84,50 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: 16,
+    backgroundColor: '#f5f5f5',
   },
   centered: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
   },
+  card: {
+    backgroundColor: 'white',
+    padding: 16,
+    borderRadius: 8,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
+  },
   title: {
     fontSize: 24,
     fontWeight: 'bold',
+    marginBottom: 8,
   },
   projectName: {
     fontSize: 16,
     color: 'gray',
-    marginTop: 8,
+    marginBottom: 16,
   },
   dueDate: {
     fontSize: 14,
     color: 'gray',
-    marginTop: 8,
+    marginBottom: 16,
   },
   statusContainer: {
-    marginTop: 32,
+    marginTop: 16,
   },
   statusText: {
     fontSize: 18,
     fontWeight: 'bold',
     textAlign: 'center',
+    marginBottom: 8,
   },
   slider: {
     width: '100%',
     height: 40,
-    marginTop: 16,
   },
   buttonsContainer: {
     flexDirection: 'row',

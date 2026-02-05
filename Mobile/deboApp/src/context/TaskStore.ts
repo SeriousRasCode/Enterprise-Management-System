@@ -1,24 +1,7 @@
 import create from 'zustand';
-import api from '../services/api';
+import tasks from '../tasks.json';
 
-interface Task {
-  id: string;
-  title: string;
-  projectName: string;
-  dueDate: string;
-  status: number;
-}
-
-interface TaskState {
-  tasks: Task[];
-  currentTask: Task | null;
-  loading: boolean;
-  loadingCurrentTask: boolean;
-  error: string | null;
-  fetchTasks: () => Promise<void>;
-  fetchTaskById: (id: string) => Promise<void>;
-  updateTaskStatus: (id: string, status: number) => Promise<void>;
-}
+// ... (imports and interface definitions remain the same)
 
 const useTaskStore = create<TaskState>((set, get) => ({
   tasks: [],
@@ -29,8 +12,9 @@ const useTaskStore = create<TaskState>((set, get) => ({
   fetchTasks: async () => {
     set({ loading: true, error: null });
     try {
-      const response = await api.get('/tasks/assigned');
-      set({ tasks: response.data.tasks || response.data, loading: false });
+      // Simulate API call delay
+      await new Promise(resolve => setTimeout(resolve, 500));
+      set({ tasks: tasks as Task[], loading: false });
     } catch (e) {
       console.error('Failed to fetch tasks:', e);
       set({ error: 'Failed to fetch tasks', loading: false });
@@ -39,8 +23,10 @@ const useTaskStore = create<TaskState>((set, get) => ({
   fetchTaskById: async (id: string) => {
     set({ loadingCurrentTask: true, error: null });
     try {
-      const response = await api.get(`/tasks/${id}`);
-      set({ currentTask: response.data, loadingCurrentTask: false });
+      // Simulate API call delay
+      await new Promise(resolve => setTimeout(resolve, 500));
+      const task = tasks.find(t => t.id === id);
+      set({ currentTask: task as Task, loadingCurrentTask: false });
     } catch (e) {
       console.error(`Failed to fetch task ${id}:`, e);
       set({ error: `Failed to fetch task ${id}`, loadingCurrentTask: false });
@@ -48,14 +34,16 @@ const useTaskStore = create<TaskState>((set, get) => ({
   },
   updateTaskStatus: async (id: string, status: number) => {
     try {
-      const response = await api.patch(`/tasks/${id}/update-status`, { status });
-      const updatedTask = response.data;
-      
+      // Simulate API call delay
+      await new Promise(resolve => setTimeout(resolve, 500));
+      const updatedTasks = tasks.map(task => 
+        task.id === id ? { ...task, status } : task
+      );
+      const updatedTask = updatedTasks.find(t => t.id === id);
+
       set((state) => ({
-        currentTask: updatedTask,
-        tasks: state.tasks.map((task) =>
-          task.id === id ? updatedTask : task
-        ),
+        currentTask: updatedTask as Task,
+        tasks: updatedTasks as Task[],
       }));
     } catch (e) {
       console.error(`Failed to update task ${id}:`, e);

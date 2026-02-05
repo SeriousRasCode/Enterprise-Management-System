@@ -17,7 +17,10 @@ const TaskCard: React.FC<TaskCardProps> = ({ id, title, projectName, dueDate, st
         <Text style={styles.title}>{title}</Text>
         <Text style={styles.projectName}>{projectName}</Text>
         <Text style={styles.dueDate}>Due: {dueDate}</Text>
-        <Text style={styles.status}>Status: {status}%</Text>
+        <Text style={styles.status}>Status:</Text>
+        <View style={styles.statusBar}>
+            <View style={[styles.statusFill, { width: `${status}%` }]} />
+        </View>
       </TouchableOpacity>
     </Link>
   );
@@ -54,6 +57,18 @@ const styles = StyleSheet.create({
     color: 'green',
     marginTop: 8,
     fontWeight: 'bold',
+  },
+  statusBar: {
+    height: 10,
+    width: '100%',
+    backgroundColor: '#e0e0e0',
+    borderRadius: 5,
+    marginTop: 4,
+  },
+  statusFill: {
+    height: '100%',
+    backgroundColor: 'green',
+    borderRadius: 5,
   },
 });
 

@@ -12,6 +12,8 @@ const ProfileScreen = () => {
         <View style={styles.userInfoContainer}>
           <Text style={styles.label}>Name:</Text>
           <Text style={styles.info}>{user.name}</Text>
+          <Text style={styles.label}>Email:</Text>
+          <Text style={styles.info}>{user.email}</Text>
           <Text style={styles.label}>Role:</Text>
           <Text style={styles.info}>{user.role}</Text>
           <Text style={styles.label}>Team:</Text>
