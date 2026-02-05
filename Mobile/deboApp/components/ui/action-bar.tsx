@@ -43,6 +43,7 @@ const styles = StyleSheet.create({
   safe: { backgroundColor: 'transparent' },
   container: {
     height: 56,
+    width: '100%',
     paddingHorizontal: 12,
     flexDirection: 'row',
     alignItems: 'center',
