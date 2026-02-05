@@ -1,21 +1,27 @@
-import pool from "./src/config/db.js";
 import express from "express";
 import dotenv from "dotenv";
-import createTables from "./src/db/create-table.js";
+import pool from "./src/config/db.js";
 
 dotenv.config();
 
 const app = express();
 app.use(express.json());
+
 const PORT = process.env.PORT || 3333;
 
-
-app.get("/", (req, res) => {
-    res.send("Welcome to the Project and Task Management API");
+// test endpoint
+app.get("/", async (req, res) => {
+    try {
+        const [rows] = await pool.query("SELECT NOW() AS current_time");
+        res.json({
+            message: "Welcome to the Project and Task Management API",
+            db_time: rows[0].current_time
+        });z
+    } catch (err) {
+        res.status(500).json({ message: "Database error", error: err.message });
+    }
 });
 
-// Initialize database tables
-createTables(); 
 app.listen(PORT, () => {
     console.log(`Server running at http://localhost:${PORT}`);
 });
