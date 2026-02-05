@@ -1,5 +1,6 @@
 import React, { useEffect, useState, useCallback } from 'react';
 import { View, Text, StyleSheet, FlatList, ActivityIndicator, RefreshControl } from 'react-native';
+import ActionBar from '@/components/ui/action-bar';
 import useTaskStore from '@/src/context/TaskStore';
 import TaskCard from '@/src/components/TaskCard';
 
@@ -34,7 +35,7 @@ const DashboardScreen = () => {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Dashboard</Text>
+      <ActionBar title="Dashboard" />
       <FlatList
         data={tasks}
         renderItem={({ item }) => (
