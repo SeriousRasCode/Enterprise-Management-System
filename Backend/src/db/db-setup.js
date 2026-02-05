@@ -244,3 +244,9 @@ app.get('/api/setup-database', async (req, res) => {
 app.listen(port, () => {
     console.log(`🚀 Server running on http://localhost:${port}`);
 });
+
+// Before running this endpoint, you can uncomment and run the following SQL to insert default roles:
+// INSERT INTO roles (name, description) VALUES
+// ('Admin', 'System Administrator'),
+// ('Manager', 'Project Manager'),
+// ('Member', 'Team Member');
