@@ -1,4 +1,7 @@
-import create from 'zustand';
+import * as zustand from 'zustand';
+
+// Support environments where zustand is exported as CommonJS or ESM.
+const create: typeof import('zustand').default = (zustand as any).default ?? (zustand as any).create ?? (zustand as any);
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import api from '../services/api';
 
