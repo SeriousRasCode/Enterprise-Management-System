@@ -57,8 +57,9 @@ const TaskDetailScreen: React.FC<TaskDetailScreenProps> = ({ taskId }) => {
   }
 
   return (
-    <View style={styles.container}>
+    <>
       <ActionBar title={currentTask.title} showBack onBack={() => router.back()} />
+      <View style={styles.container}>
       <View style={[styles.card, { marginTop: 12 }]}>
         <Text style={styles.title}>{currentTask.title}</Text>
         <Text style={styles.projectName}>{currentTask.projectName}</Text>
