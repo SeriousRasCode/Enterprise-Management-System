@@ -1,4 +1,4 @@
-import create from 'zustand';
+import { create } from 'zustand';
 import tasks from '../tasks.json';
 
 // ... (imports and interface definitions remain the same)
