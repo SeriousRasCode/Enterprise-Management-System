@@ -13,6 +13,6 @@ const router = express.Router();
 //     res.json({ message: "Project created" });
 //   }
 // );
-router.post("/projects", authenticate, authorizeRoles("Admin", "Manager"), createProject);
+router.post("/projects", authenticate, authorizeRoles("Manager"), createProject);
 
 export default router;
