@@ -250,3 +250,7 @@ app.listen(port, () => {
 // ('Admin', 'System Administrator'),
 // ('Manager', 'Project Manager'),
 // ('Member', 'Team Member');
+
+// Similarly, you can insert a default user and a team for testing purposes:
+// INSERT INTO teams (name, created_by)
+// VALUES ('Backend Team', 1);
