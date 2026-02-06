@@ -30,6 +30,7 @@ export const login = async (req, res) => {
 
     const token = signToken({
         userId: user.id,
+          email: user.email,
         roles
     });
 
