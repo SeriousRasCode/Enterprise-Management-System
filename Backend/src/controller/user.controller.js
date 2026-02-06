@@ -1,37 +1,20 @@
-import { createUser, findUserByEmail, getUserRoles } from '../model/user.model.js';
-import { hashPassword, comparePassword } from '../utils/password.js';
-import { signToken } from '../utils/jwt.js';
 import pool from '../config/db.js';
 
-export const register = async (req, res) => {
-    const { full_name, email, password, role_id } = req.body;
+export const getProfile = async (req, res) => {
+    try {
+        const userId = req.user.userId;
 
-    const passwordHash = await hashPassword(password);
-    const userId = await createUser(full_name, email, passwordHash);
+        const [[user]] = await pool.query(
+            `SELECT id, full_name, email, is_active, created_at
+             FROM users
+             WHERE id = ?`,
+            [userId]
+        );
 
-    await pool.query(
-        `INSERT INTO user_roles (user_id, role_id) VALUES (?, ?)`,
-        [userId, role_id]
-    );
+        if (!user) return res.status(404).json({ message: 'User not found' });
 
-    res.status(201).json({ message: 'User registered successfully' });
-};
-
-export const login = async (req, res) => {
-    const { email, password } = req.body;
-
-    const user = await findUserByEmail(email);
-    if (!user) return res.status(401).json({ message: 'Invalid credentials' });
-
-    const match = await comparePassword(password, user.password_hash);
-    if (!match) return res.status(401).json({ message: 'Invalid credentials' });
-
-    const roles = await getUserRoles(user.id);
-
-    const token = signToken({
-        userId: user.id,
-        roles
-    });
-
-    res.json({ token });
+        res.json({ user });
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
 };
