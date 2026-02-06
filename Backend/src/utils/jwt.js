@@ -1,11 +1,11 @@
 import jwt from 'jsonwebtoken';
 
 export const signToken = (payload) => {
-    return jwt.sign(payload, process.env.JWT_SECRET || 'default-secret-key', {
+    return jwt.sign(payload, process.env.JWT_SECRET || 'kjhfdshzfi#@1234*^(^(97087654)(&^%$#@!~`)', {
         expiresIn: '1d'
     });
 };
 
 export const verifyToken = (token) => {
-    return jwt.verify(token, process.env.JWT_SECRET || 'default-secret-key');
+    return jwt.verify(token, process.env.JWT_SECRET || 'kjhfdshzfi#@1234*^(^(97087654)(&^%$#@!~`)');
 };
