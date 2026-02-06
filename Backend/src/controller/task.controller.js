@@ -4,6 +4,7 @@ import {
   updateTaskById,
   deleteTaskById
 } from "../model/task.model.js";
+import { createTaskUpdateModel } from "../model/taskUpdate.model.js";
 import { isUserAssignedToTaskModel } from "../model/taskAssignment.model.js";
 import pool from "../config/db.js";
 
@@ -126,7 +127,7 @@ export const updateTaskProgress = async (req, res) => {
   try {
     const { taskId } = req.params;
     const userId = req.user.userId; // from JWT
-    const { progress_percentage } = req.body;
+    const { progress_percentage, update_note } = req.body;
 
     // validate progress
     let status = "not_started";
@@ -158,9 +159,23 @@ export const updateTaskProgress = async (req, res) => {
       [status, progress_percentage, taskId]
     );
 
+    // res.json({
+    //   message: "Task updated successfully"
+    // });
+
+    // 🧾 save history
+    await createTaskUpdateModel(
+      taskId,
+      userId,
+      progress_percentage,
+      status,
+      update_note || null
+    );
+
     res.json({
-      message: "Task updated successfully"
+      message: "Task updated and history recorded"
     });
+
 
   } catch (error) {
     console.error("Update task error:", error);
