@@ -23,6 +23,11 @@ export const login = async (req, res) => {
     const user = await findUserByEmail(email);
     if (!user) return res.status(401).json({ message: 'Invalid credentials' });
 
+     if (user.is_active === 0) {
+    return res.status(403).json({
+      message: "Account is deactivated. Contact admin."
+    });
+  }
     const match = await comparePassword(password, user.password_hash);
     if (!match) return res.status(401).json({ message: 'Invalid credentials' });
 
