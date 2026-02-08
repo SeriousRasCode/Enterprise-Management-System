@@ -58,3 +58,12 @@ export const assignUserRoleModel = async (userId, roleName) => {
     connection.release();
   }
 };
+
+export const updateUserStatusModel = async (userId, isActive) => {
+  const [result] = await pool.query(
+    `UPDATE users SET is_active = ? WHERE id = ?`,
+    [isActive, userId]
+  );
+
+  return result.affectedRows;
+};
