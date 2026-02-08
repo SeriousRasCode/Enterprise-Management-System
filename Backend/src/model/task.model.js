@@ -56,3 +56,30 @@ export const deleteTaskById = async (taskId) => {
   );
   return result;
 };
+
+
+export const getMyTasksModel = async (userId) => {
+  const [rows] = await pool.query(
+    `
+    SELECT 
+      t.id,
+      t.title,
+      t.description,
+      t.status,
+      t.progress_percentage,
+      t.start_date,
+      t.due_date,
+      t.created_at,
+      p.id AS project_id,
+      p.name AS project_name
+    FROM task_assignments ta
+    JOIN tasks t ON ta.task_id = t.id
+    JOIN projects p ON t.project_id = p.id
+    WHERE ta.user_id = ?
+    ORDER BY t.created_at DESC
+    `,
+    [userId]
+  );
+
+  return rows;
+};
