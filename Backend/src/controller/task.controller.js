@@ -7,6 +7,8 @@ import {
 import { createTaskUpdateModel } from "../model/taskUpdate.model.js";
 import { isUserAssignedToTaskModel } from "../model/taskAssignment.model.js";
 import pool from "../config/db.js";
+import { updateProjectProgressModel } from "../model/project.model.js";
+import { getMyTasksModel } from "../model/task.model.js";
 
 
 export const createTask = async (req, res) => {
@@ -40,7 +42,7 @@ export const createTask = async (req, res) => {
       status,
       progress_percentage
     );
-
+await updateProjectProgressModel(projectId);
     res.status(201).json({
       message: "Task created successfully",
       taskId: result.insertId
@@ -176,11 +178,40 @@ export const updateTaskProgress = async (req, res) => {
       message: "Task updated and history recorded"
     });
 
+    // update project progress
+const [[task]] = await pool.query(
+  `SELECT project_id FROM tasks WHERE id = ?`,
+  [taskId]
+);
+
+await updateProjectProgressModel(task.project_id);
+
 
   } catch (error) {
     console.error("Update task error:", error);
     res.status(500).json({
       message: "Failed to update task"
+    });
+  }
+};
+
+
+
+export const getMyTasks = async (req, res) => {
+  try {
+    const userId = req.user.id;
+
+    const tasks = await getMyTasksModel(userId);
+
+    res.status(200).json({
+      success: true,
+      count: tasks.length,
+      data: tasks
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: "Failed to fetch tasks"
     });
   }
 };
