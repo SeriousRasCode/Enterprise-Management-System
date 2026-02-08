@@ -1,5 +1,5 @@
 import express from "express";
-import { createTask, getTasksByProject, updateTask, deleteTask, updateTaskProgress,} from "../controller/task.controller.js";
+import { createTask, getTasksByProject, updateTask, deleteTask, updateTaskProgress, getMyTasks} from "../controller/task.controller.js";
 import {authenticate} from "../middleware/auth.middleware.js";
 import { authorizeRoles } from "../middleware/role.middleware.js";
 import { getTaskUpdatesModel } from "../model/taskUpdate.model.js";
@@ -53,4 +53,9 @@ router.patch(
   updateTaskProgress
 );
 
+router.get(
+  "/my-tasks",
+  authenticate,
+  getMyTasks
+);
 export default router;
