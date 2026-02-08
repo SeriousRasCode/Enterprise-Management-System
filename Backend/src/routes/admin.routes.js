@@ -1,5 +1,5 @@
 import express from "express";
-import { getAllUsers, assignUserRole, updateUserStatus } from "../controller/admin.controller.js";
+import { getAllUsers, assignUserRole, updateUserStatus, createRole } from "../controller/admin.controller.js";
 import {authenticate} from "../middleware/auth.middleware.js";
 import {authorizeRoles} from "../middleware/role.middleware.js";
 
@@ -26,5 +26,10 @@ router.patch(
   authorizeRoles("Admin"),
   updateUserStatus
 );
-
+router.post(
+  '/create-roles',
+  authenticate,
+  authorizeRoles("Admin"),
+  createRole
+);
 export default router;
