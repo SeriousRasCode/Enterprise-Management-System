@@ -67,3 +67,22 @@ export const updateUserStatusModel = async (userId, isActive) => {
 
   return result.affectedRows;
 };
+
+export const createRoleModel = async (roleName, description) => {
+  // Avoid duplicate role names
+  const [[existing]] = await pool.query(
+    'SELECT id FROM roles WHERE name = ?',
+    [roleName]
+  );
+
+  if (existing) {
+    return { error: "Role already exists" };
+  }
+
+  const [result] = await pool.query(
+    'INSERT INTO roles (name, description) VALUES (?, ?)',
+    [roleName, description || null]
+  );
+
+  return { roleId: result.insertId };
+};
