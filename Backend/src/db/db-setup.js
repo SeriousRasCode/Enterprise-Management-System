@@ -254,3 +254,17 @@ app.listen(port, () => {
 // Similarly, you can insert a default user and a team for testing purposes:
 // INSERT INTO teams (name, created_by)
 // VALUES ('Backend Team', 1);
+
+// After running the setup endpoint, you can run the following SQL to add the progress_percentage column to projects:
+// ALTER TABLE projects
+// ADD COLUMN progress_percentage DECIMAL(5,2) DEFAULT 0;
+
+
+
+// And to add the assigned_to column to tasks:
+// ALTER TABLE tasks
+// ADD COLUMN assigned_to INT,
+// ADD CONSTRAINT fk_tasks_user
+// FOREIGN KEY (assigned_to) REFERENCES users(id)
+// ON DELETE SET NULL;
+
