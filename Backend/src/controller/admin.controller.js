@@ -1,4 +1,4 @@
-import { getAllUsersModel, assignUserRoleModel, updateUserStatusModel } from "../model/admin.model.js";
+import { getAllUsersModel, assignUserRoleModel, updateUserStatusModel, createRoleModel } from "../model/admin.model.js";
 
 export const getAllUsers = async (req, res) => {
   try {
@@ -67,3 +67,30 @@ export const updateUserStatus = async (req, res) => {
   }
 };
 
+
+
+export const createRole = async (req, res) => {
+  try {
+    const { name, description } = req.body;
+
+    if (!name) {
+      return res.status(400).json({ message: "Role name is required" });
+    }
+
+    const result = await createRoleModel(name, description);
+
+    if (result.error) {
+      return res.status(409).json({ message: result.error });
+    }
+
+    res.status(201).json({
+      success: true,
+      message: "Role created successfully",
+      roleId: result.roleId
+    });
+
+  } catch (error) {
+    console.error("Create role error:", error);
+    res.status(500).json({ message: "Failed to create role" });
+  }
+};
