@@ -19,8 +19,8 @@ const setupPool = mysql.createPool({
     connectionLimit: 5
 });
 
-/**
- * ================= DATABASE SETUP ENDPOINT =================
+/*
+ DATABASE SETUP ENDPOINT 
  */
 app.get('/api/setup-database', async (req, res) => {
     let connection;
@@ -33,11 +33,11 @@ app.get('/api/setup-database', async (req, res) => {
 
         console.log('🚀 Starting database setup...');
 
-        /* ================= DATABASE ================= */
+        /*  DATABASE*/
         await connection.query(`CREATE DATABASE IF NOT EXISTS \`${DB_NAME}\``);
         await connection.query(`USE \`${DB_NAME}\``);
 
-        /* ================= ROLES ================= */
+        /*  ROLES  */
         await connection.query(`
             CREATE TABLE IF NOT EXISTS roles (
                 id INT AUTO_INCREMENT PRIMARY KEY,
@@ -50,7 +50,7 @@ app.get('/api/setup-database', async (req, res) => {
             CREATE UNIQUE INDEX idx_roles_name ON roles(name)
         `);
 
-        /* ================= USERS ================= */
+        /*  USERS*/
         await connection.query(`
             CREATE TABLE IF NOT EXISTS users (
                 id INT AUTO_INCREMENT PRIMARY KEY,
@@ -68,7 +68,7 @@ app.get('/api/setup-database', async (req, res) => {
             CREATE UNIQUE INDEX idx_users_email ON users(email)
         `);
 
-        /* ================= USER ROLES ================= */
+        /*  USER ROLES */
         await connection.query(`
             CREATE TABLE IF NOT EXISTS user_roles (
                 user_id INT NOT NULL,
@@ -86,7 +86,7 @@ app.get('/api/setup-database', async (req, res) => {
             CREATE INDEX idx_user_roles_role_id ON user_roles(role_id)
         `);
 
-        /* ================= TEAMS ================= */
+        /*  TEAMS  */
         await connection.query(`
             CREATE TABLE IF NOT EXISTS teams (
                 id INT AUTO_INCREMENT PRIMARY KEY,
@@ -101,7 +101,7 @@ app.get('/api/setup-database', async (req, res) => {
             CREATE INDEX idx_teams_created_by ON teams(created_by)
         `);
 
-        /* ================= TEAM MEMBERS ================= */
+        /* TEAM MEMBERS  */
         await connection.query(`
             CREATE TABLE IF NOT EXISTS team_members (
                 team_id INT NOT NULL,
@@ -119,7 +119,7 @@ app.get('/api/setup-database', async (req, res) => {
             CREATE INDEX idx_team_members_user_id ON team_members(user_id)
         `);
 
-        /* ================= PROJECTS ================= */
+        /*  PROJECTS  */
         await connection.query(`
             CREATE TABLE IF NOT EXISTS projects (
                 id INT AUTO_INCREMENT PRIMARY KEY,
@@ -147,7 +147,7 @@ app.get('/api/setup-database', async (req, res) => {
             CREATE INDEX idx_projects_status ON projects(status)
         `);
 
-        /* ================= TASKS ================= */
+        /*  TASKS  */
         await connection.query(`
             CREATE TABLE IF NOT EXISTS tasks (
                 id INT AUTO_INCREMENT PRIMARY KEY,
@@ -174,7 +174,7 @@ app.get('/api/setup-database', async (req, res) => {
             CREATE INDEX idx_tasks_due_date ON tasks(due_date)
         `);
 
-        /* ================= TASK ASSIGNMENTS ================= */
+        /*  TASK ASSIGNMENTS  */
         await connection.query(`
             CREATE TABLE IF NOT EXISTS task_assignments (
                 task_id INT NOT NULL,
@@ -193,7 +193,7 @@ app.get('/api/setup-database', async (req, res) => {
             CREATE INDEX idx_task_assignments_user_id ON task_assignments(user_id)
         `);
 
-        /* ================= TASK UPDATES ================= */
+        /*  TASK UPDATES  */
         await connection.query(`
             CREATE TABLE IF NOT EXISTS task_updates (
                 id INT AUTO_INCREMENT PRIMARY KEY,
@@ -254,3 +254,21 @@ app.listen(port, () => {
 // Similarly, you can insert a default user and a team for testing purposes:
 // INSERT INTO teams (name, created_by)
 // VALUES ('Backend Team', 1);
+
+// After running the setup endpoint, you can run the following SQL to add the progress_percentage column to projects:
+// ALTER TABLE projects
+// ADD COLUMN progress_percentage DECIMAL(5,2) DEFAULT 0;
+
+
+
+// And to add the assigned_to column to tasks:
+// ALTER TABLE tasks
+// ADD COLUMN assigned_to INT,
+// ADD CONSTRAINT fk_tasks_user
+// FOREIGN KEY (assigned_to) REFERENCES users(id)
+// ON DELETE SET NULL;
+
+// Finally, to add password reset fields to users:
+// ALTER TABLE users
+// ADD COLUMN reset_token VARCHAR(255),
+// ADD COLUMN reset_token_expires DATETIME;

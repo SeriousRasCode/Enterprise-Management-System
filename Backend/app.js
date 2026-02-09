@@ -7,6 +7,7 @@ import taskAssignmentRoutes from "./src/routes/taskAssignment.routes.js";
 import reportRoutes from "./src/routes/report.routes.js";
 import dashboardRoutes from "./src/routes/dashboard.routes.js";
 import adminRoutes from "./src/routes/admin.routes.js";
+import teamRoutes from "./src/routes/team.routes.js";
 
 const app = express();
 
@@ -19,4 +20,5 @@ app.use('/api/reports', reportRoutes);
 app.use('/api/users', userRoutes);
 app.use('/api/dashboard', dashboardRoutes);
 app.use('/api/admin', adminRoutes);
+app.use('/api/teams', teamRoutes);
 export default app;

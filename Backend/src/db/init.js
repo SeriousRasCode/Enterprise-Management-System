@@ -1,4 +1,8 @@
-/* =========================================
+import pool from "../config/db.js";
+
+const createTables = async ()=>{
+   const query =`
+   /* =========================================
    PROJECT & TASK MANAGEMENT SYSTEM
    MariaDB / MySQL Compatible Schema
 ========================================= */
@@ -159,4 +163,15 @@ CREATE INDEX IF NOT EXISTS idx_projects_created_by ON projects(created_by);
 CREATE INDEX IF NOT EXISTS idx_team_members_user ON team_members(user_id);
 CREATE INDEX IF NOT EXISTS idx_team_members_team ON team_members(team_id);
 CREATE INDEX IF NOT EXISTS idx_project_teams_project ON project_teams(project_id);
-CREATE INDEX IF NOT EXISTS idx_project_teams_team ON project_teams(team_id);
+CREATE INDEX IF NOT EXISTS idx_project_teams_team ON project_teams(team_id);`;
+
+try{
+    await pool.query(query);
+    console.log("Tables created successfully");
+} catch (error) {
+    console.error("Error creating tables:", error); 
+}
+};
+createTables();
+
+export default createTables;
