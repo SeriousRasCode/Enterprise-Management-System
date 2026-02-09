@@ -1,0 +1,597 @@
+openapi: "3.0.3"
+info:
+  title: "PTMS API (Full)"
+  version: "1.0.0"
+  description: "Full OpenAPI spec for Project & Task Management System (covers all backend routes)"
+servers:
+  - url: http://localhost:3333/api
+    description: Primary API (app server)
+  - url: http://localhost:3333
+    description: Root endpoints (non-API)
+  - url: http://localhost:3000
+    description: DB setup server (db-setup.js)
+components:
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+  schemas:
+    ApiResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+        data:
+          nullable: true
+        message:
+          type: string
+    RegisterReq:
+      type: object
+      required: [full_name, email, password, role_id]
+      properties:
+        full_name: { type: string }
+        email: { type: string, format: email }
+        password: { type: string }
+        role_id: { type: integer }
+    LoginReq:
+      type: object
+      required: [email, password]
+      properties:
+        email: { type: string, format: email }
+        password: { type: string }
+    AuthResp:
+      type: object
+      properties:
+        token: { type: string }
+        expires_in: { type: integer }
+    User:
+      type: object
+      properties:
+        id: { type: integer }
+        full_name: { type: string }
+        email: { type: string, format: email }
+        role_id: { type: integer }
+        is_active: { type: boolean }
+    UpdateProfileReq:
+      type: object
+      properties:
+        full_name: { type: string }
+        email: { type: string, format: email }
+    ChangePasswordReq:
+      type: object
+      required: [currentPassword, newPassword]
+      properties:
+        currentPassword: { type: string }
+        newPassword: { type: string }
+    RoleReq:
+      type: object
+      required: [name]
+      properties:
+        name: { type: string }
+        description: { type: string }
+    ProjectReq:
+      type: object
+      required: [name, team_id]
+      properties:
+        name: { type: string }
+        description: { type: string }
+        team_id: { type: integer }
+        start_date: { type: string, format: date }
+        end_date: { type: string, format: date }
+        status: { type: string, enum: [planned, active, completed, on_hold] }
+    Project:
+      allOf:
+        - $ref: '#/components/schemas/ProjectReq'
+        - type: object
+          properties:
+            id: { type: integer }
+            manager_id: { type: integer }
+    TaskReq:
+      type: object
+      required: [title]
+      properties:
+        title: { type: string }
+        description: { type: string }
+        start_date: { type: string, format: date }
+        due_date: { type: string, format: date }
+        status: { type: string, enum: [not_started, started, completed, blocked] }
+        progress_percentage: { type: integer, minimum: 0, maximum: 100 }
+    Task:
+      allOf:
+        - $ref: '#/components/schemas/TaskReq'
+        - type: object
+          properties:
+            id: { type: integer }
+            project_id: { type: integer }
+    TaskProgressUpdate:
+      type: object
+      properties:
+        progress_percentage: { type: integer, minimum: 0, maximum: 100 }
+        update_note: { type: string }
+    AssignReq:
+      type: object
+      properties:
+        userId: { type: integer }
+    TeamReq:
+      type: object
+      required: [name]
+      properties:
+        name: { type: string }
+    ErrorResp:
+      type: object
+      properties:
+        success: { type: boolean, default: false }
+        message: { type: string }
+
+paths:
+  /auth/register:
+    post:
+      tags: [Auth]
+      summary: Register user
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RegisterReq'
+      responses:
+        "201":
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
+  /auth/login:
+    post:
+      tags: [Auth]
+      summary: Login
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LoginReq'
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  token: { type: string }
+  /auth/forgot-password:
+    post:
+      tags: [Auth]
+      summary: Request password reset (dev returns token)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email: { type: string, format: email }
+      responses:
+        "200":
+          description: Email / token returned
+  /auth/reset-password:
+    post:
+      tags: [Auth]
+      summary: Reset password
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                token: { type: string }
+                newPassword: { type: string }
+      responses:
+        "200":
+          description: Password reset
+
+  /users/profile:
+    get:
+      tags: [Users]
+      summary: Get current user profile
+      security: [{ BearerAuth: [] }]
+      responses:
+        "200":
+          description: Profile
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
+  /users/me:
+    get:
+      tags: [Users]
+      summary: Alias for profile
+      security: [{ BearerAuth: [] }]
+      responses:
+        "200":
+          description: Profile
+  /users/update-me:
+    put:
+      tags: [Users]
+      summary: Update current user
+      security: [{ BearerAuth: [] }]
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateProfileReq'
+      responses:
+        "200":
+          description: Updated
+  /users/me/password:
+    put:
+      tags: [Users]
+      summary: Change password
+      security: [{ BearerAuth: [] }]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ChangePasswordReq'
+      responses:
+        "200":
+          description: Password changed
+
+  /admin/all-users:
+    get:
+      tags: [Admin]
+      summary: Get all users
+      security: [{ BearerAuth: [] }]
+      responses:
+        "200":
+          description: Users list
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
+  /admin/users/{userId}/change-roles:
+    post:
+      tags: [Admin]
+      summary: Assign/change role
+      security: [{ BearerAuth: [] }]
+      parameters:
+        - name: userId
+          in: path
+          required: true
+          schema: { type: integer }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                roleName: { type: string }
+      responses:
+        "200":
+          description: Role updated
+  /admin/users/{userId}/change-status:
+    patch:
+      tags: [Admin]
+      summary: Update user active status
+      security: [{ BearerAuth: [] }]
+      parameters:
+        - name: userId
+          in: path
+          required: true
+          schema: { type: integer }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                is_active: { type: boolean }
+      responses:
+        "200":
+          description: Status updated
+  /admin/create-roles:
+    post:
+      tags: [Admin]
+      summary: Create role
+      security: [{ BearerAuth: [] }]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RoleReq'
+      responses:
+        "201":
+          description: Role created
+
+  /create-projects:
+    post:
+      tags: [Projects]
+      summary: Create project
+      security: [{ BearerAuth: [] }]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ProjectReq'
+      responses:
+        "201":
+          description: Created
+  /all-projects:
+    get:
+      tags: [Projects]
+      summary: Get all projects (admin)
+      security: [{ BearerAuth: [] }]
+      responses:
+        "200":
+          description: Projects list
+  /update-projects/{projectId}:
+    put:
+      tags: [Projects]
+      summary: Update project
+      security: [{ BearerAuth: [] }]
+      parameters:
+        - name: projectId
+          in: path
+          required: true
+          schema: { type: integer }
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ProjectReq'
+      responses:
+        "200":
+          description: Updated
+
+  /tasks/projects/{projectId}:
+    post:
+      tags: [Tasks]
+      summary: Create a task under a project
+      security: [{ BearerAuth: [] }]
+      parameters:
+        - name: projectId
+          in: path
+          required: true
+          schema: { type: integer }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TaskReq'
+      responses:
+        "201":
+          description: Task created
+    get:
+      tags: [Tasks]
+      summary: Get tasks by project
+      security: [{ BearerAuth: [] }]
+      parameters:
+        - name: projectId
+          in: path
+          required: true
+          schema: { type: integer }
+      responses:
+        "200":
+          description: Tasks list
+
+  /tasks/{taskId}:
+    put:
+      tags: [Tasks]
+      summary: Update task (manager)
+      security: [{ BearerAuth: [] }]
+      parameters:
+        - name: taskId
+          in: path
+          required: true
+          schema: { type: integer }
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TaskReq'
+      responses:
+        "200":
+          description: Updated
+    delete:
+      tags: [Tasks]
+      summary: Delete task
+      security: [{ BearerAuth: [] }]
+      parameters:
+        - name: taskId
+          in: path
+          required: true
+          schema: { type: integer }
+      responses:
+        "200":
+          description: Deleted
+
+  /tasks/{taskId}/progress:
+    patch:
+      tags: [Tasks]
+      summary: Update task progress (member)
+      security: [{ BearerAuth: [] }]
+      parameters:
+        - name: taskId
+          in: path
+          required: true
+          schema: { type: integer }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TaskProgressUpdate'
+      responses:
+        "200":
+          description: Progress updated and history recorded
+
+  /tasks/{taskId}/history:
+    get:
+      tags: [Tasks]
+      summary: Get task update history
+      security: [{ BearerAuth: [] }]
+      parameters:
+        - name: taskId
+          in: path
+          required: true
+          schema: { type: integer }
+      responses:
+        "200":
+          description: History returned
+
+  /tasks/my-tasks:
+    get:
+      tags: [Tasks]
+      summary: Get tasks assigned to current user
+      security: [{ BearerAuth: [] }]
+      responses:
+        "200":
+          description: My tasks
+
+  /tasks/{taskId}/assign:
+    post:
+      tags: [Assignments]
+      summary: Assign task to a user
+      security: [{ BearerAuth: [] }]
+      parameters:
+        - name: taskId
+          in: path
+          required: true
+          schema: { type: integer }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AssignReq'
+      responses:
+        "201":
+          description: Assigned
+
+  /tasks/{taskId}/assignments:
+    get:
+      tags: [Assignments]
+      summary: Get task assignments
+      security: [{ BearerAuth: [] }]
+      parameters:
+        - name: taskId
+          in: path
+          required: true
+          schema: { type: integer }
+      responses:
+        "200":
+          description: Assignments list
+
+  /reports/overdue-tasks:
+    get:
+      tags: [Reports]
+      summary: Get overdue tasks
+      security: [{ BearerAuth: [] }]
+      responses:
+        "200":
+          description: Overdue tasks
+
+  /reports/workload:
+    get:
+      tags: [Reports]
+      summary: Get user workload
+      security: [{ BearerAuth: [] }]
+      responses:
+        "200":
+          description: Workload summary
+
+  /dashboard/manager:
+    get:
+      tags: [Dashboard]
+      summary: Manager dashboard summary
+      security: [{ BearerAuth: [] }]
+      responses:
+        "200":
+          description: Manager summary
+
+  /dashboard/admin-summary:
+    get:
+      tags: [Dashboard]
+      summary: Admin dashboard summary
+      security: [{ BearerAuth: [] }]
+      responses:
+        "200":
+          description: Admin summary
+
+  /teams/my-teams:
+    get:
+      tags: [Teams]
+      summary: Get teams for current user
+      security: [{ BearerAuth: [] }]
+      responses:
+        "200":
+          description: Teams list
+
+  /teams/create:
+    post:
+      tags: [Teams]
+      summary: Create a team
+      security: [{ BearerAuth: [] }]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TeamReq'
+      responses:
+        "201":
+          description: Team created
+
+  /teams/{userId}/members:
+    post:
+      tags: [Teams]
+      summary: Add member to a team (admin)
+      security: [{ BearerAuth: [] }]
+      parameters:
+        - name: userId
+          in: path
+          required: true
+          schema: { type: integer }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                userId: { type: integer }
+      responses:
+        "200":
+          description: Member added
+
+  /setup-database:
+    get:
+      tags: [Setup]
+      summary: Initialize DB (db-setup.js runs on its own server)
+      servers:
+        - url: http://localhost:3000
+      responses:
+        "200":
+          description: Database created & tables initialized
+
+  /:
+    get:
+      tags: [Root]
+      summary: Root welcome (server.js)
+      servers:
+        - url: http://localhost:3333
+      responses:
+        "200":
+          description: Welcome message
+
+security:
+  - BearerAuth: []
