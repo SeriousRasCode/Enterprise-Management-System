@@ -26,17 +26,8 @@ const useAuthStore = create<AuthState>((set) => ({
 
   login: async (email, password) => {
     try {
-      // Simulate API call delay
-      await new Promise(resolve => setTimeout(resolve, 500));
-      
-      const user: User = {
-        id: '1',
-        name: 'John Doe',
-        email: email,
-        role: 'Manager',
-        team: 'Development'
-      };
-      const token = 'fake-token';
+      const response = await api.post('/auth/login', { email, password });
+      const { token, user } = response.data;
 
       await AsyncStorage.setItem('token', token);
       set({ token, user, isAuthenticated: true });

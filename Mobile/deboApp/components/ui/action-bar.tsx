@@ -26,7 +26,7 @@ export default function ActionBar({ title, style, children, showBack, onBack }: 
         <View style={styles.left}>
           {showBack ? (
             <TouchableOpacity onPress={onBack} style={styles.backButton} accessibilityLabel="Back">
-              <IconSymbol name="chevron.right" size={28} color="#fff" />
+              <IconSymbol name="chevron.left" size={28} color="#fff" />
             </TouchableOpacity>
           ) : null}
         </View>
