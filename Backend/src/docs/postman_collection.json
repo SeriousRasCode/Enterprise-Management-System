@@ -1,0 +1,332 @@
+{
+  "info": {
+    "name": "PTMS API - Full",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "version": "1.0.0"
+  },
+  "item": [
+    {
+      "name": "Root / Welcome",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": { "raw": "{{baseUrl}}/", "host": ["{{baseUrl}}"], "path": [""] }
+      }
+    },
+    {
+      "name": "Auth / Register",
+      "request": {
+        "method": "POST",
+        "header": [{ "key": "Content-Type", "value": "application/json" }],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"full_name\": \"Test User\",\n  \"email\": \"test@example.com\",\n  \"password\": \"Password123\",\n  \"role_id\": 3\n}"
+        },
+        "url": { "raw": "{{baseUrl}}/auth/register", "host": ["{{baseUrl}}"], "path": ["auth","register"] }
+      }
+    },
+    {
+      "name": "Auth / Login",
+      "request": {
+        "method": "POST",
+        "header": [{ "key": "Content-Type", "value": "application/json" }],
+        "body": { "mode": "raw", "raw": "{\n  \"email\": \"test@example.com\",\n  \"password\": \"Password123\"\n}" },
+        "url": { "raw": "{{baseUrl}}/auth/login", "host": ["{{baseUrl}}"], "path": ["auth","login"] }
+      }
+    },
+    {
+      "name": "Auth / Forgot Password",
+      "request": {
+        "method": "POST",
+        "header": [{ "key": "Content-Type", "value": "application/json" }],
+        "body": { "mode": "raw", "raw": "{ \"email\": \"test@example.com\" }" },
+        "url": { "raw": "{{baseUrl}}/auth/forgot-password", "host": ["{{baseUrl}}"], "path": ["auth","forgot-password"] }
+      }
+    },
+    {
+      "name": "Auth / Reset Password",
+      "request": {
+        "method": "POST",
+        "header": [{ "key": "Content-Type", "value": "application/json" }],
+        "body": { "mode": "raw", "raw": "{ \"token\": \"<RESET_TOKEN>\", \"newPassword\": \"NewPass123\" }" },
+        "url": { "raw": "{{baseUrl}}/auth/reset-password", "host": ["{{baseUrl}}"], "path": ["auth","reset-password"] }
+      }
+    },
+    {
+      "name": "Users / Get Profile (profile & me)",
+      "request": {
+        "method": "GET",
+        "header": [{ "key": "Authorization", "value": "Bearer {{authToken}}" }],
+        "url": { "raw": "{{baseUrl}}/users/profile", "host": ["{{baseUrl}}"], "path": ["users","profile"] }
+      }
+    },
+    {
+      "name": "Users / Get Profile (alias /me)",
+      "request": {
+        "method": "GET",
+        "header": [{ "key": "Authorization", "value": "Bearer {{authToken}}" }],
+        "url": { "raw": "{{baseUrl}}/users/me", "host": ["{{baseUrl}}"], "path": ["users","me"] }
+      }
+    },
+    {
+      "name": "Users / Update Profile",
+      "request": {
+        "method": "PUT",
+        "header": [
+          { "key": "Content-Type", "value": "application/json" },
+          { "key": "Authorization", "value": "Bearer {{authToken}}" }
+        ],
+        "body": { "mode": "raw", "raw": "{ \"full_name\": \"Updated Name\", \"email\": \"new@example.com\" }" },
+        "url": { "raw": "{{baseUrl}}/users/update-me", "host": ["{{baseUrl}}"], "path": ["users","update-me"] }
+      }
+    },
+    {
+      "name": "Users / Change Password",
+      "request": {
+        "method": "PUT",
+        "header": [
+          { "key": "Content-Type", "value": "application/json" },
+          { "key": "Authorization", "value": "Bearer {{authToken}}" }
+        ],
+        "body": { "mode": "raw", "raw": "{ \"currentPassword\": \"OldPass123\", \"newPassword\": \"NewPass123\" }" },
+        "url": { "raw": "{{baseUrl}}/users/me/password", "host": ["{{baseUrl}}"], "path": ["users","me","password"] }
+      }
+    },
+    {
+      "name": "Admin / Get All Users",
+      "request": {
+        "method": "GET",
+        "header": [{ "key": "Authorization", "value": "Bearer {{authToken}}" }],
+        "url": { "raw": "{{baseUrl}}/admin/all-users", "host": ["{{baseUrl}}"], "path": ["admin","all-users"] }
+      }
+    },
+    {
+      "name": "Admin / Assign Role",
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Content-Type", "value": "application/json" },
+          { "key": "Authorization", "value": "Bearer {{authToken}}" }
+        ],
+        "body": { "mode": "raw", "raw": "{ \"roleName\": \"Manager\" }" },
+        "url": { "raw": "{{baseUrl}}/admin/users/:userId/change-roles", "host": ["{{baseUrl}}"], "path": ["admin","users",":userId","change-roles"] }
+      }
+    },
+    {
+      "name": "Admin / Update User Status",
+      "request": {
+        "method": "PATCH",
+        "header": [
+          { "key": "Content-Type", "value": "application/json" },
+          { "key": "Authorization", "value": "Bearer {{authToken}}" }
+        ],
+        "body": { "mode": "raw", "raw": "{ \"is_active\": true }" },
+        "url": { "raw": "{{baseUrl}}/admin/users/:userId/change-status", "host": ["{{baseUrl}}"], "path": ["admin","users",":userId","change-status"] }
+      }
+    },
+    {
+      "name": "Admin / Create Role",
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Content-Type", "value": "application/json" },
+          { "key": "Authorization", "value": "Bearer {{authToken}}" }
+        ],
+        "body": { "mode": "raw", "raw": "{ \"name\": \"QA\", \"description\": \"Quality Assurance\" }" },
+        "url": { "raw": "{{baseUrl}}/admin/create-roles", "host": ["{{baseUrl}}"], "path": ["admin","create-roles"] }
+      }
+    },
+    {
+      "name": "Projects / Create Project",
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Content-Type", "value": "application/json" },
+          { "key": "Authorization", "value": "Bearer {{authToken}}" }
+        ],
+        "body": { "mode": "raw", "raw": "{ \"name\": \"New Project\", \"description\": \"desc\", \"team_id\": 1, \"start_date\": \"2026-01-01\", \"end_date\": \"2026-06-01\" }" },
+        "url": { "raw": "{{baseUrl}}/create-projects", "host": ["{{baseUrl}}"], "path": ["create-projects"] }
+      }
+    },
+    {
+      "name": "Projects / Get All (Admin)",
+      "request": {
+        "method": "GET",
+        "header": [{ "key": "Authorization", "value": "Bearer {{authToken}}" }],
+        "url": { "raw": "{{baseUrl}}/all-projects", "host": ["{{baseUrl}}"], "path": ["all-projects"] }
+      }
+    },
+    {
+      "name": "Projects / Update Project",
+      "request": {
+        "method": "PUT",
+        "header": [
+          { "key": "Content-Type", "value": "application/json" },
+          { "key": "Authorization", "value": "Bearer {{authToken}}" }
+        ],
+        "body": { "mode": "raw", "raw": "{ \"name\": \"Updated Project\", \"description\": \"updated\", \"status\": \"active\" }" },
+        "url": { "raw": "{{baseUrl}}/update-projects/:projectId", "host": ["{{baseUrl}}"], "path": ["update-projects",":projectId"] }
+      }
+    },
+    {
+      "name": "Tasks / Create Task (Manager)",
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Content-Type", "value": "application/json" },
+          { "key": "Authorization", "value": "Bearer {{authToken}}" }
+        ],
+        "body": { "mode": "raw", "raw": "{ \"title\": \"Task 1\", \"description\": \"Do work\", \"start_date\": \"2026-01-10\", \"due_date\": \"2026-02-10\", \"status\": \"not_started\", \"progress_percentage\": 0 }" },
+        "url": { "raw": "{{baseUrl}}/tasks/projects/:projectId", "host": ["{{baseUrl}}"], "path": ["tasks","projects",":projectId"] }
+      }
+    },
+    {
+      "name": "Tasks / Get Tasks By Project",
+      "request": {
+        "method": "GET",
+        "header": [{ "key": "Authorization", "value": "Bearer {{authToken}}" }],
+        "url": { "raw": "{{baseUrl}}/tasks/projects/:projectId", "host": ["{{baseUrl}}"], "path": ["tasks","projects",":projectId"] }
+      }
+    },
+    {
+      "name": "Tasks / Update Task",
+      "request": {
+        "method": "PUT",
+        "header": [
+          { "key": "Content-Type", "value": "application/json" },
+          { "key": "Authorization", "value": "Bearer {{authToken}}" }
+        ],
+        "body": { "mode": "raw", "raw": "{ \"progress_percentage\": 50 }" },
+        "url": { "raw": "{{baseUrl}}/tasks/:taskId", "host": ["{{baseUrl}}"], "path": ["tasks",":taskId"] }
+      }
+    },
+    {
+      "name": "Tasks / Delete Task",
+      "request": {
+        "method": "DELETE",
+        "header": [{ "key": "Authorization", "value": "Bearer {{authToken}}" }],
+        "url": { "raw": "{{baseUrl}}/tasks/:taskId", "host": ["{{baseUrl}}"], "path": ["tasks",":taskId"] }
+      }
+    },
+    {
+      "name": "Tasks / Update Progress (Member)",
+      "request": {
+        "method": "PATCH",
+        "header": [
+          { "key": "Content-Type", "value": "application/json" },
+          { "key": "Authorization", "value": "Bearer {{authToken}}" }
+        ],
+        "body": { "mode": "raw", "raw": "{ \"progress_percentage\": 75, \"update_note\": \"Work in progress\" }" },
+        "url": { "raw": "{{baseUrl}}/tasks/:taskId/progress", "host": ["{{baseUrl}}"], "path": ["tasks",":taskId","progress"] }
+      }
+    },
+    {
+      "name": "Tasks / Get Task History",
+      "request": {
+        "method": "GET",
+        "header": [{ "key": "Authorization", "value": "Bearer {{authToken}}" }],
+        "url": { "raw": "{{baseUrl}}/tasks/:taskId/history", "host": ["{{baseUrl}}"], "path": ["tasks",":taskId","history"] }
+      }
+    },
+    {
+      "name": "Tasks / My Tasks",
+      "request": {
+        "method": "GET",
+        "header": [{ "key": "Authorization", "value": "Bearer {{authToken}}" }],
+        "url": { "raw": "{{baseUrl}}/tasks/my-tasks", "host": ["{{baseUrl}}"], "path": ["tasks","my-tasks"] }
+      }
+    },
+    {
+      "name": "Task Assignment / Assign Task",
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Content-Type", "value": "application/json" },
+          { "key": "Authorization", "value": "Bearer {{authToken}}" }
+        ],
+        "body": { "mode": "raw", "raw": "{ \"userId\": 5 }" },
+        "url": { "raw": "{{baseUrl}}/tasks/:taskId/assign", "host": ["{{baseUrl}}"], "path": ["tasks",":taskId","assign"] }
+      }
+    },
+    {
+      "name": "Task Assignment / Get Assignments",
+      "request": {
+        "method": "GET",
+        "header": [{ "key": "Authorization", "value": "Bearer {{authToken}}" }],
+        "url": { "raw": "{{baseUrl}}/tasks/:taskId/assignments", "host": ["{{baseUrl}}"], "path": ["tasks",":taskId","assignments"] }
+      }
+    },
+    {
+      "name": "Reports / Overdue Tasks",
+      "request": {
+        "method": "GET",
+        "header": [{ "key": "Authorization", "value": "Bearer {{authToken}}" }],
+        "url": { "raw": "{{baseUrl}}/reports/overdue-tasks", "host": ["{{baseUrl}}"], "path": ["reports","overdue-tasks"] }
+      }
+    },
+    {
+      "name": "Reports / Workload",
+      "request": {
+        "method": "GET",
+        "header": [{ "key": "Authorization", "value": "Bearer {{authToken}}" }],
+        "url": { "raw": "{{baseUrl}}/reports/workload", "host": ["{{baseUrl}}"], "path": ["reports","workload"] }
+      }
+    },
+    {
+      "name": "Dashboard / Manager",
+      "request": {
+        "method": "GET",
+        "header": [{ "key": "Authorization", "value": "Bearer {{authToken}}" }],
+        "url": { "raw": "{{baseUrl}}/dashboard/manager", "host": ["{{baseUrl}}"], "path": ["dashboard","manager"] }
+      }
+    },
+    {
+      "name": "Dashboard / Admin Summary",
+      "request": {
+        "method": "GET",
+        "header": [{ "key": "Authorization", "value": "Bearer {{authToken}}" }],
+        "url": { "raw": "{{baseUrl}}/dashboard/admin-summary", "host": ["{{baseUrl}}"], "path": ["dashboard","admin-summary"] }
+      }
+    },
+    {
+      "name": "Teams / My Teams",
+      "request": {
+        "method": "GET",
+        "header": [{ "key": "Authorization", "value": "Bearer {{authToken}}" }],
+        "url": { "raw": "{{baseUrl}}/teams/my-teams", "host": ["{{baseUrl}}"], "path": ["teams","my-teams"] }
+      }
+    },
+    {
+      "name": "Teams / Create Team",
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Content-Type", "value": "application/json" },
+          { "key": "Authorization", "value": "Bearer {{authToken}}" }
+        ],
+        "body": { "mode": "raw", "raw": "{ \"name\": \"New Team\" }" },
+        "url": { "raw": "{{baseUrl}}/teams/create", "host": ["{{baseUrl}}"], "path": ["teams","create"] }
+      }
+    },
+    {
+      "name": "Teams / Add Team Member (route uses :userId param per routes file)",
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Content-Type", "value": "application/json" },
+          { "key": "Authorization", "value": "Bearer {{authToken}}" }
+        ],
+        "body": { "mode": "raw", "raw": "{ \"userId\": 5 }" },
+        "url": { "raw": "{{baseUrl}}/teams/:userId/members", "host": ["{{baseUrl}}"], "path": ["teams",":userId","members"] }
+      }
+    },
+    {
+      "name": "DB Setup / Create Database & Tables (db-setup server)",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": { "raw": "{{dbSetupBaseUrl}}/api/setup-database", "host": ["{{dbSetupBaseUrl}}"], "path": ["api","setup-database"] }
+      }
+    }
+  ]
+}
