@@ -62,3 +62,46 @@ export const getAllProjectsAdmin = async (req, res) => {
     res.status(500).json({ message: err.message });
   }
 };
+
+
+export const updateProject = async (req, res) => {
+  try {
+    const { projectId } = req.params;
+    const userId = req.user.userId;
+    const roles = req.user.roles;
+
+    const {
+      name,
+      description,
+      status,
+      start_date,
+      end_date
+    } = req.body;
+
+    // Ownership check (manager only)
+    if (!roles.includes('admin')) {
+      const [[project]] = await pool.query(
+        `SELECT id FROM projects WHERE id = ? AND manager_id = ?`,
+        [projectId, userId]
+      );
+
+      if (!project) {
+        return res.status(403).json({
+          message: 'You can only update your own projects'
+        });
+      }
+    }
+
+    await pool.query(
+      `UPDATE projects
+       SET name = ?, description = ?, status = ?, start_date = ?, end_date = ?
+       WHERE id = ?`,
+      [name, description, status, start_date, end_date, projectId]
+    );
+
+    res.json({ message: 'Project updated successfully' });
+
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+};
