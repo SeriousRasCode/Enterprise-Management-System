@@ -1,5 +1,26 @@
 import { create } from 'zustand';
 import api from '../services/api';
+interface Task {
+  id: string;
+  title: string;
+  description: string;
+  progress: number;
+  projectName: string;
+  dueDate: string;
+  status: string;
+  // Add other task properties as needed
+}
+
+interface TaskState {
+  tasks: Task[];
+  currentTask: Task | null;
+  loading: boolean;
+  loadingCurrentTask: boolean;
+  error: string | null;
+  fetchTasks: () => Promise<void>;
+  fetchTaskById: (id: string) => Promise<void>;
+  updateTaskStatus: (id: string, status: number) => Promise<void>;
+}
 
 // ... (imports and interface definitions remain the same)
 
@@ -12,8 +33,8 @@ const useTaskStore = create<TaskState>((set, get) => ({
   fetchTasks: async () => {
     set({ loading: true, error: null });
     try {
-      const response = await api.get('/tasks/my-tasks');
-      set({ tasks: response.data.data as Task[], loading: false });
+      const response = await api.get('/task/my-tasks');
+      set({ tasks: response.data as Task[], loading: false });
     } catch (e) {
       console.error('Failed to fetch tasks:', e);
       set({ error: 'Failed to fetch tasks', loading: false });
