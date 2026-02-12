@@ -17,6 +17,7 @@ interface AuthState {
   login: (email: string, password: string) => Promise<void>;
   logout: () => void;
   checkAuth: () => Promise<void>;
+  resetPassword: (token: string, newPassword: string) => Promise<void>;
 }
 
 const useAuthStore = create<AuthState>((set) => ({
@@ -50,7 +51,7 @@ const useAuthStore = create<AuthState>((set) => ({
     if (token) {
       try {
         api.defaults.headers.common['Authorization'] = `Bearer ${token}`;
-        const response = await api.get('/users/profile');
+        const response = await api.get('/users/me');
         const user = response.data;
         set({ token, user, isAuthenticated: true });
       } catch (error) {
@@ -60,6 +61,15 @@ const useAuthStore = create<AuthState>((set) => ({
         delete api.defaults.headers.common['Authorization'];
         set({ token: null, user: null, isAuthenticated: false });
       }
+    }
+  },
+
+  resetPassword: async (token, newPassword) => {
+    try {
+      await api.post('/auth/reset-password', { token, newPassword });
+    } catch (error) {
+      console.error('Failed to reset password:', error);
+      throw error;
     }
   }
 }));
