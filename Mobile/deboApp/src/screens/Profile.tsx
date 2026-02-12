@@ -30,10 +30,10 @@ const ProfileScreen = ({ navigation }) => {
         )}
 
         <View style={styles.buttonContainer}>
-          <Button title="Update Profile" onPress={() => navigation.navigate('UpdateProfile')} />
+          <Button title="Update Profile" onPress={() => navigation.push('/profile/UpdateProfile')} />
         </View>
         <View style={styles.buttonContainer}>
-          <Button title="Change Password" onPress={() => navigation.navigate('ChangePassword')} />
+          <Button title="Change Password" onPress={() => navigation.push('/profile/ChangePassword')} />
         </View>
         <View style={styles.logoutContainer}>
           <Button title="Logout" onPress={logout} />

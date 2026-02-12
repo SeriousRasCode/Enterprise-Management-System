@@ -1,12 +1,19 @@
 import { Tabs } from 'expo-router';
-import React from 'react';
+import React, { useEffect } from 'react';
 
 import { HapticTab } from '@/components/haptic-tab';
 import { IconSymbol } from '@/components/ui/icon-symbol';
 import { Colors } from '@/constants/theme';
 import CustomTabBar from '@/components/ui/custom-tabbar';
+import useAuthStore from '@/src/context/AuthStore';
 
 export default function TabLayout() {
+  const { checkAuth } = useAuthStore();
+
+  useEffect(() => {
+    checkAuth();
+  }, []);
+  
   return (
     <Tabs
       tabBar={(props) => <CustomTabBar {...props} />}

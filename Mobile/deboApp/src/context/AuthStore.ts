@@ -50,7 +50,7 @@ const useAuthStore = create<AuthState>((set) => ({
     if (token) {
       try {
         api.defaults.headers.common['Authorization'] = `Bearer ${token}`;
-        const response = await api.get('/user/profile');
+        const response = await api.get('/users/profile');
         const user = response.data;
         set({ token, user, isAuthenticated: true });
       } catch (error) {
