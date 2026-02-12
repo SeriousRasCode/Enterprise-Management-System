@@ -53,7 +53,7 @@ const useAuthStore = create<AuthState>((set) => ({
       try {
         api.defaults.headers.common['Authorization'] = `Bearer ${token}`;
         const response = await api.get('/users/me');
-        const user = response.data;
+        const { user } = response.data;
         set({ token, user, isAuthenticated: true });
       } catch (error) {
         console.error('Failed to fetch user profile:', error);

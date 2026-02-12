@@ -4,7 +4,7 @@ import useAuthStore from '@/src/context/AuthStore';
 import ActionBar, { ACTION_BAR_HEIGHT } from '@/components/ui/action-bar';
 import Button from '@/components/ui/button';
 
-const ProfileScreen = ({ navigation }) => {
+const ProfileScreen = ({ navigation }: { navigation: any }) => {
   const { user, logout } = useAuthStore();
 
   return (
