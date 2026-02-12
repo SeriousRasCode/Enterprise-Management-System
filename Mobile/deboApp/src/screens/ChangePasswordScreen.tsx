@@ -12,7 +12,7 @@ const ChangePasswordScreen = ({ navigation }) => {
 
   const handleChangePassword = async () => {
     try {
-      await api.put('/user/me/password', { currentPassword, newPassword });
+      await api.put('/users/me/password', { currentPassword, newPassword });
       setSuccess('Password changed successfully!');
       setCurrentPassword('');
       setNewPassword('');
