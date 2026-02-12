@@ -6,7 +6,7 @@ import Button from '@/components/ui/button';
 import api from '../services/api';
 
 const UpdateProfileScreen = ({ navigation }) => {
-  const { user, login } = useAuthStore();
+  const { user, updateUser } = useAuthStore();
   const [fullName, setFullName] = useState(user?.full_name || '');
   const [email, setEmail] = useState(user?.email || '');
   const [error, setError] = useState('');
@@ -14,10 +14,10 @@ const UpdateProfileScreen = ({ navigation }) => {
 
   const handleUpdate = async () => {
     try {
-      const response = await api.put('/user/update-me', { full_name: fullName, email });
-      const { token, user: updatedUser } = response.data;
-      // The login function updates the user in the store
-      login(email, updatedUser.password);
+      const response = await api.put('/users/update-me', { full_name: fullName, email });
+      const updatedUser = response.data;
+      // The updateUser function updates the user in the store
+      updateUser(updatedUser);
       setSuccess('Profile updated successfully!');
     } catch (err) {
       setError('Failed to update profile.');
