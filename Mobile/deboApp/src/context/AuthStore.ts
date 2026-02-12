@@ -18,6 +18,7 @@ interface AuthState {
   logout: () => void;
   checkAuth: () => Promise<void>;
   resetPassword: (token: string, newPassword: string) => Promise<void>;
+  updateUser: (user: User) => void;
 }
 
 const useAuthStore = create<AuthState>((set) => ({
@@ -71,7 +72,9 @@ const useAuthStore = create<AuthState>((set) => ({
       console.error('Failed to reset password:', error);
       throw error;
     }
-  }
+  },
+  
+  updateUser: (user) => set({ user }),
 }));
 
 export default useAuthStore;
