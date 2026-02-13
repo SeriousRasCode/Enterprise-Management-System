@@ -24,6 +24,7 @@ function AppRoutes() {
         </Route>
       </Route>
     </Routes>
+    
   );
 }
 
