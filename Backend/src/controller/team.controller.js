@@ -1,3 +1,4 @@
+import pool from '../config/db.js';
 import { findTeamsByUserId, createTeam, addUserToTeam  } from '../model/team.model.js';
 
 export const getMyTeams = async (req, res) => {
@@ -64,5 +65,25 @@ export const addTeamMemberController = async (req, res) => {
     }
 
     res.status(500).json({ message: 'Failed to add user to team' });
+  }
+};
+
+export const getAllTeams = async (req, res) => {
+  try {
+    const [teams] = await pool.query(`
+      SELECT t.id, t.name, t.created_at, u.full_name AS created_by
+      FROM teams t
+      JOIN users u ON t.created_by = u.id
+      ORDER BY t.created_at DESC
+    `);
+
+    res.json({
+      success: true,
+      count: teams.length,
+      data: teams
+    });
+
+  } catch (error) {
+    res.status(500).json({ message: error.message });
   }
 };
