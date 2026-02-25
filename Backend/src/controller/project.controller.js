@@ -127,7 +127,7 @@ export const getMyProjects = async (req, res) => {
     let values = [];
 
     // 🔐 If not admin → filter by manager_id
-    if (!roles.includes('admin')) {
+    if (!roles.includes('Admin')) {
       query += ` WHERE p.manager_id = ?`;
       values.push(userId);
     }
