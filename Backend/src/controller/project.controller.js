@@ -105,3 +105,44 @@ export const updateProject = async (req, res) => {
     res.status(500).json({ message: err.message });
   }
 };
+
+export const getMyProjects = async (req, res) => {
+  try {
+    const userId = req.user.userId;
+    const roles = req.user.roles || [];
+
+    let query = `
+      SELECT 
+        p.id,
+        p.name,
+        p.description,
+        p.status,
+        p.start_date,
+        p.end_date,
+        t.name AS team_name
+      FROM projects p
+      JOIN teams t ON p.team_id = t.id
+    `;
+
+    let values = [];
+
+    // 🔐 If not admin → filter by manager_id
+    if (!roles.includes('admin')) {
+      query += ` WHERE p.manager_id = ?`;
+      values.push(userId);
+    }
+
+    query += ` ORDER BY p.created_at DESC`;
+
+    const [projects] = await pool.query(query, values);
+
+    res.json({
+      success: true,
+      count: projects.length,
+      data: projects
+    });
+
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
