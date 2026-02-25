@@ -87,3 +87,31 @@ export const getAllTeams = async (req, res) => {
     res.status(500).json({ message: error.message });
   }
 };
+
+export const getTeamMembers = async (req, res) => {
+  try {
+    const { teamId } = req.params;
+
+    const [members] = await pool.query(
+      `SELECT 
+          u.id,
+          u.full_name,
+          u.email,
+          u.is_active,
+          u.created_at
+       FROM team_members tm
+       JOIN users u ON tm.user_id = u.id
+       WHERE tm.team_id = ?`,
+      [teamId]
+    );
+
+    res.json({
+      success: true,
+      count: members.length,
+      data: members
+    });
+
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
