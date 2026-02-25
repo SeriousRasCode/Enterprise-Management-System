@@ -13,5 +13,5 @@ router.get(
 );
 router.get('/my-teams', authenticate, getMyTeams);
 router.post('/create', authenticate,authorizeRoles("Admin"), createTeamController);
-router.post('/:userId/members', authenticate,authorizeRoles("Admin"), addTeamMemberController);
+router.post('/:id/members', authenticate,authorizeRoles("Admin"), addTeamMemberController);
 export default router;
