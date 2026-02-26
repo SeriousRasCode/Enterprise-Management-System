@@ -9,7 +9,7 @@ export const AuthProvider = ({ children }) => {
   const [token, setToken] = useState(getToken());
   const [loading, setLoading] = useState(true);
 
-  // Restore auth on refresh
+  //Restore auth on refresh
   useEffect(() => {
     const initAuth = async () => {
       if (!token) {
@@ -28,7 +28,6 @@ export const AuthProvider = ({ children }) => {
         setLoading(false);
       }
     };
-
     initAuth();
   }, []);
 
