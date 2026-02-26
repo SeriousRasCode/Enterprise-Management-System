@@ -16,7 +16,7 @@ const router = express.Router();
 router.get(
   '/projects/my-projects',
   authenticate,
-  authorizeRoles("Admin", "Manager"),
+  authorizeRoles("Member", "Manager"),
   getMyProjects
 );
 router.post("/create-projects", authenticate, authorizeRoles("Manager"), createProject);
