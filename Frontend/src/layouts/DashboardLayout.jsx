@@ -1,7 +1,5 @@
 import { motion } from "framer-motion";
 import { Outlet, Link, useLocation } from "react-router-dom";
-//import { Card, CardContent } from "@/components/ui/card";
-//import { Button } from "@/components/ui/button";
 import { LayoutDashboard, Users, FolderKanban, LogOut } from "lucide-react";
 import { useAuth } from "../context/AuthContext";
 
