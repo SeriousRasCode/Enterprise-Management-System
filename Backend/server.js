@@ -4,26 +4,20 @@ import app from "./app.js";
 
 dotenv.config();
 
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 3333;
 
 // test endpoint
 app.get("/api", async (req, res) => {
-    try {
-        //const [rows] = await pool.query("SELECT CURRENT_TIMESTAMP() AS current_time");
-        res.json({
-            message: "Welcome to the Project and Task Management API",
-            //db_time: rows[0].current_time
-        });
-    } catch (err) {
-        res.status(500).json({ message: "Database error", error: err.message });
-    }
+  try {
+    res.json({
+      message: "Welcome to the Project and Task Management API",
+    });
+  } catch (err) {
+    res.status(500).json({ message: "Database error", error: err.message });
+  }
 });
-
-// app.listen(PORT, '0.0.0.0', () => {
-//     console.log(`Server running at http://localhost:${PORT}`);
-// });
-    console.log(process.env.EMAIL_USER);
+console.log(process.env.EMAIL_USER);
 console.log(process.env.EMAIL_PASS);
 app.listen(PORT, () => {
-    console.log(`Server running at http://localhost:${PORT}`);
+  console.log(`Server running at http://localhost:${PORT}`);
 });
