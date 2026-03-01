@@ -4,6 +4,8 @@ import { signToken } from '../utils/jwt.js';
 import pool from '../config/db.js';
 import crypto from 'crypto';
 import bcrypt from 'bcryptjs';
+import { sendResetEmail } from '../utils/email.js';
+
 
 export const register = async (req, res) => {
     const { full_name, email, password, role_id } = req.body;
@@ -56,32 +58,44 @@ export const forgotPassword = async (req, res) => {
     }
 
     const [[user]] = await pool.query(
-      `SELECT id FROM users WHERE email = ? AND is_active = true`,
+      `SELECT id, email FROM users 
+       WHERE email = ? AND is_active = true`,
       [email]
     );
 
-    // SECURITY: do not reveal if email exists
+    // Always return same response (prevent enumeration)
     if (!user) {
-      return res.json({ message: 'If email exists, reset instructions sent' });
+      return res.json({
+        message: 'If the email exists, reset instructions sent'
+      });
     }
 
-    // 1 Generate reset token
-    const resetToken = crypto.randomBytes(32).toString('hex');
-    const expiresAt = new Date(Date.now() + 15 * 60 * 1000); // 15 minutes
+    // 1 Generate raw token
+    const rawToken = crypto.randomBytes(32).toString('hex');
 
-    // 2 Save token
+    // 2 Hash token
+    const hashedToken = crypto
+      .createHash('sha256')
+      .update(rawToken)
+      .digest('hex');
+
+    // 3 Expiry (15 minutes)
+    const expiry = new Date(Date.now() + 15 * 60 * 1000);
+
+    // 4 Save HASHED token
     await pool.query(
-      `UPDATE users 
-       SET reset_token = ?, reset_token_expires = ?
+      `UPDATE users
+       SET reset_token_hash = ?, 
+           reset_token_expiry = ?
        WHERE id = ?`,
-      [resetToken, expiresAt, user.id]
+      [hashedToken, expiry, user.id]
     );
 
-    // 🚨 Normally we email the token
-    // For now we return it (DEV ONLY)
+    // 5 Send RAW token in email
+    await sendResetEmail(user.email, rawToken);
+
     res.json({
-      message: 'Password reset token generated',
-      resetToken
+      message: 'If the email exists, reset instructions sent'
     });
 
   } catch (error) {
@@ -91,45 +105,62 @@ export const forgotPassword = async (req, res) => {
 
 
 
+
 export const resetPassword = async (req, res) => {
   try {
     const { token, newPassword } = req.body;
 
     if (!token || !newPassword) {
-      return res.status(400).json({ message: 'Token and new password required' });
+      return res.status(400).json({
+        message: 'Token and new password required'
+      });
     }
 
     if (newPassword.length < 8) {
-      return res.status(400).json({ message: 'Password must be at least 8 characters' });
+      return res.status(400).json({
+        message: 'Password must be at least 8 characters'
+      });
     }
 
-    // 1️⃣ Find valid token
+    // 1 Hash incoming token
+    const hashedToken = crypto
+      .createHash('sha256')
+      .update(token)
+      .digest('hex');
+
+    // 2 Find valid token
     const [[user]] = await pool.query(
       `SELECT id FROM users
-       WHERE reset_token = ?
-       AND reset_token_expires > NOW()`,
-      [token]
+       WHERE reset_token_hash = ?
+       AND reset_token_expiry > NOW()`,
+      [hashedToken]
     );
 
     if (!user) {
-      return res.status(400).json({ message: 'Invalid or expired token' });
+      return res.status(400).json({
+        message: 'Invalid or expired token'
+      });
     }
 
-    // 2️⃣ Hash new password
-    const hash = await bcrypt.hash(newPassword, 10);
+    // 3 Hash new password
+    const hashedPassword = await bcrypt.hash(newPassword, 12);
 
-    // 3️⃣ Update password & clear token
+    // 4 Update password & clear reset fields
     await pool.query(
       `UPDATE users
-       SET password_hash = ?, reset_token = NULL, reset_token_expires = NULL
+       SET password_hash = ?,
+           reset_token_hash = NULL,
+           reset_token_expiry = NULL,
+           password_changed_at = NOW()
        WHERE id = ?`,
-      [hash, user.id]
+      [hashedPassword, user.id]
     );
 
-    res.json({ message: 'Password reset successful' });
+    res.json({
+      message: 'Password reset successful'
+    });
 
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
 };
-
