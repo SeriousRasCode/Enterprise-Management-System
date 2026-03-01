@@ -38,13 +38,15 @@ export const login = async (req, res) => {
     const roles = await getUserRoles(user.id);
 
     const token = signToken({
+      
         userId: user.id,
           email: user.email,
         roles
     });
-
-    res.json({ token });
+    //res.json({ token });
+   res.json({ token, user: { id: user.id, fullName: user.full_name, email: user.email, roles } });
 };
+
 
 
 export const forgotPassword = async (req, res) => {

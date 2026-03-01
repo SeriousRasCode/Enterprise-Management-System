@@ -4,7 +4,7 @@ import useAuthStore from '@/src/context/AuthStore';
 import ActionBar, { ACTION_BAR_HEIGHT } from '@/components/ui/action-bar';
 import Button from '@/components/ui/button';
 
-const ProfileScreen = () => {
+const ProfileScreen = ({ navigation }: { navigation: any }) => {
   const { user, logout } = useAuthStore();
 
   return (
@@ -15,7 +15,7 @@ const ProfileScreen = () => {
         {user ? (
           <View style={styles.card}>
             <Text style={styles.label}>Name</Text>
-            <Text style={styles.info}>{user.name}</Text>
+            <Text style={styles.info}>{user.full_name}</Text>
             <Text style={styles.label}>Email</Text>
             <Text style={styles.info}>{user.email}</Text>
             <Text style={styles.label}>Role</Text>
@@ -29,6 +29,12 @@ const ProfileScreen = () => {
           </View>
         )}
 
+        <View style={styles.buttonContainer}>
+          <Button title="Update Profile" onPress={() => navigation.push('/profile/UpdateProfile')} />
+        </View>
+        <View style={styles.buttonContainer}>
+          <Button title="Change Password" onPress={() => navigation.push('/profile/ChangePassword')} />
+        </View>
         <View style={styles.logoutContainer}>
           <Button title="Logout" onPress={logout} />
         </View>
@@ -62,6 +68,9 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.06,
     shadowRadius: 4,
     elevation: 2,
+  },
+  buttonContainer: {
+    marginBottom: 12,
   },
   logoutContainer: {
     marginTop: 12,

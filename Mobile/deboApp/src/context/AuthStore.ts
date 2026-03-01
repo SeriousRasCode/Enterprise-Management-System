@@ -4,7 +4,7 @@ import api from '../services/api';
 
 interface User {
   id: string;
-  name: string;
+  full_name: string;
   email: string;
   role: string;
   team: string;
@@ -17,6 +17,8 @@ interface AuthState {
   login: (email: string, password: string) => Promise<void>;
   logout: () => void;
   checkAuth: () => Promise<void>;
+  resetPassword: (token: string, newPassword: string) => Promise<void>;
+  updateUser: (user: User) => void;
 }
 
 const useAuthStore = create<AuthState>((set) => ({
@@ -48,12 +50,31 @@ const useAuthStore = create<AuthState>((set) => ({
   checkAuth: async () => {
     const token = await AsyncStorage.getItem('token');
     if (token) {
-        // Here you might want to verify the token with your backend
-        // For simplicity, we'll just set the state
+      try {
         api.defaults.headers.common['Authorization'] = `Bearer ${token}`;
-        set({ token, isAuthenticated: true });
+        const response = await api.get('/users/me');
+        const { user } = response.data;
+        set({ token, user, isAuthenticated: true });
+      } catch (error) {
+        console.error('Failed to fetch user profile:', error);
+        // Token might be invalid, so we log out
+        await AsyncStorage.removeItem('token');
+        delete api.defaults.headers.common['Authorization'];
+        set({ token: null, user: null, isAuthenticated: false });
+      }
     }
-  }
+  },
+
+  resetPassword: async (token, newPassword) => {
+    try {
+      await api.post('/auth/reset-password', { token, newPassword });
+    } catch (error) {
+      console.error('Failed to reset password:', error);
+      throw error;
+    }
+  },
+  
+  updateUser: (user) => set({ user }),
 }));
 
 export default useAuthStore;
