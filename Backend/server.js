@@ -7,8 +7,7 @@ dotenv.config();
 const PORT = process.env.PORT || 3333;
 
 // test endpoint
-// ...existing code...
-app.get("/", async (req, res) => {
+app.get("/api", async (req, res) => {
     try {
         //const [rows] = await pool.query("SELECT CURRENT_TIMESTAMP() AS current_time");
         res.json({
@@ -19,13 +18,12 @@ app.get("/", async (req, res) => {
         res.status(500).json({ message: "Database error", error: err.message });
     }
 });
-// ...existing code...
 
 // app.listen(PORT, '0.0.0.0', () => {
 //     console.log(`Server running at http://localhost:${PORT}`);
 // });
-    
+    console.log(process.env.EMAIL_USER);
+console.log(process.env.EMAIL_PASS);
 app.listen(PORT, () => {
     console.log(`Server running at http://localhost:${PORT}`);
 });
-
