@@ -91,7 +91,26 @@ export const getAllTeams = async (req, res) => {
 export const getTeamMembers = async (req, res) => {
   try {
     const { teamId } = req.params;
+    const userId = req.user.userId;
+    const roles = req.user.roles || [];
 
+    // 🔐 If not admin → verify manager owns a project in this team
+    if (!roles.includes('admin')) {
+      const [[project]] = await pool.query(
+        `SELECT id 
+         FROM projects 
+         WHERE team_id = ? AND manager_id = ?`,
+        [teamId, userId]
+      );
+
+      if (!project) {
+        return res.status(403).json({
+          message: 'You are not allowed to view this team'
+        });
+      }
+    }
+
+    // Get team members
     const [members] = await pool.query(
       `SELECT 
           u.id,
@@ -115,3 +134,30 @@ export const getTeamMembers = async (req, res) => {
     res.status(500).json({ message: error.message });
   }
 };
+// export const getTeamMembers = async (req, res) => {
+//   try {
+//     const { teamId } = req.params;
+
+//     const [members] = await pool.query(
+//       `SELECT 
+//           u.id,
+//           u.full_name,
+//           u.email,
+//           u.is_active,
+//           u.created_at
+//        FROM team_members tm
+//        JOIN users u ON tm.user_id = u.id
+//        WHERE tm.team_id = ?`,
+//       [teamId]
+//     );
+
+//     res.json({
+//       success: true,
+//       count: members.length,
+//       data: members
+//     });
+
+//   } catch (error) {
+//     res.status(500).json({ message: error.message });
+//   }
+// };
