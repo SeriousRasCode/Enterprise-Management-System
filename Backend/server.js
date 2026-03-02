@@ -1,11 +1,8 @@
-import dotenv from "dotenv";
 import pool from "./src/config/db.js";
+import dotenv from "dotenv";
 import app from "./app.js";
-
 dotenv.config();
-
 const PORT = process.env.PORT || 3333;
-
 // test endpoint
 app.get("/api", async (req, res) => {
   try {
