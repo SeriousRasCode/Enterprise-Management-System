@@ -1,5 +1,7 @@
 import nodemailer from "nodemailer";
+import dns from "dns";
 
+dns.setDefaultResultOrder("ipv4first");
 export const sendResetEmail = async (email, token, fullName) => {
   const transporter = nodemailer.createTransport({
     host: "smtp.gmail.com",
