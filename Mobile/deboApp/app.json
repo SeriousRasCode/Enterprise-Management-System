@@ -25,6 +25,9 @@
       "output": "static",
       "favicon": "./assets/images/favicon.png"
     },
+    "extra": {
+      "apiUrl": "${EXPO_PUBLIC_API_URL}"
+    },
     "plugins": [
       "expo-router",
       [
@@ -45,4 +48,5 @@
       "reactCompiler": false
     }
   }
+  
 }

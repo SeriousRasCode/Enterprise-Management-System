@@ -5,7 +5,7 @@ import Constants from 'expo-constants';
 // base URL is driven by Expo constants (extra) or hard-coded fallback
 const API_URL =
   Constants.manifest?.extra?.apiUrl ||
-  'http://192.168.121.172:3333/api';
+  'https://54c4-196-189-127-151.ngrok-free.app/api';
 
 const api = axios.create({
   baseURL: API_URL,
