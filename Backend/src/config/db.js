@@ -16,7 +16,7 @@ const pool = mysql.createPool({
     enableKeepAlive: true,
     keepAliveInitialDelay: 0,
     ssl: {
-        rejectUnauthorized: true 
+        rejectUnauthorized: false 
     }
 });
 // Test the connection on startup
