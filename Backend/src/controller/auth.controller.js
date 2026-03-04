@@ -59,7 +59,7 @@ export const forgotPassword = async (req, res) => {
     }
 
     const [[user]] = await pool.query(
-      `SELECT id, email FROM users 
+      `SELECT id, email, full_name FROM users 
        WHERE email = ? AND is_active = true`,
       [email],
     );
@@ -88,7 +88,8 @@ export const forgotPassword = async (req, res) => {
     );
 
     // Send RAW token in email
-    await sendResetEmail(user.email, rawToken);
+    await sendResetEmail(user.email, rawToken, user.full_name);
+console.log(user.full_name);
 
     res.json({
       message: "If the email exists, reset instructions sent",
