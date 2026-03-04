@@ -4,11 +4,11 @@ info:
   version: "1.0.0"
   description: "Full OpenAPI spec for Project & Task Management System (covers all backend routes)"
 servers:
-  - url: http://localhost:3333/api
+  - url: https://enterprise-management-system-1-puwg.onrender.com/api
     description: Primary API (app server)
-  - url: http://localhost:3333
+  - url: https://enterprise-management-system-1-puwg.onrender.com
     description: Root endpoints (non-API)
-  - url: http://localhost:3000
+  - url: https://enterprise-management-system-1-puwg.onrender.com
     description: DB setup server (db-setup.js)
 components:
   securitySchemes:
@@ -588,7 +588,7 @@ paths:
       tags: [Root]
       summary: Root welcome (server.js)
       servers:
-        - url: http://localhost:3333
+        - url: https://enterprise-management-system-1-puwg.onrender.com
       responses:
         "200":
           description: Welcome message
