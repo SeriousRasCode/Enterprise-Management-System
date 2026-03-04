@@ -120,6 +120,7 @@ export const getMyProjects = async (req, res) => {
         p.start_date,
         p.end_date,
         p.manager_id,
+        p.created_at,
         t.name AS team_name
       FROM projects p
       JOIN teams t ON p.team_id = t.id
