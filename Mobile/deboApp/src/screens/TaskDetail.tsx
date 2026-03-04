@@ -106,7 +106,7 @@ const TaskDetailScreen: React.FC<TaskDetailScreenProps> = ({ taskId }) => {
           styles.container,
           { paddingTop: ACTION_BAR_HEIGHT, backgroundColor: colors.background },
         ]}>
-        <View style={[styles.card, { backgroundColor: Colors[theme].card }]}>
+        <View style={[styles.card, { backgroundColor: colors.card }]}>
         <Text style={styles.title}>{currentTask.title}</Text>
         <View style={styles.metaRow}>
           <IconSymbol name="folder.fill" size={18} color={colors.tint} />
