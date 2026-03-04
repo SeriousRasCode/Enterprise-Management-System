@@ -8,7 +8,7 @@ import Button from '@/components/ui/button';
 import Slider from '@react-native-community/slider';
 import useTaskStore from '@/src/context/TaskStore';
 import { IconSymbol } from '@/components/ui/icon-symbol';
-import { Colors } from '@/constants/theme';
+
 
 interface TaskDetailScreenProps {
   taskId: string;

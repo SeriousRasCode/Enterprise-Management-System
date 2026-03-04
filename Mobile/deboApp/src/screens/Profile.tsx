@@ -20,7 +20,7 @@ const ProfileScreen = ({ navigation }: { navigation: any }) => {
         ]}>
       <View style={styles.content}>
         {user ? (
-          <View style={styles.card}>
+          <View style={[styles.card, { backgroundColor: Colors[theme].card }]}>
             <Text style={styles.label}>Name</Text>
             <Text style={styles.info}>{user.full_name}</Text>
             <Text style={styles.label}>Email</Text>
@@ -31,7 +31,7 @@ const ProfileScreen = ({ navigation }: { navigation: any }) => {
             <Text style={styles.info}>{user.team}</Text>
           </View>
         ) : (
-          <View style={styles.card}>
+          <View style={[styles.card, { backgroundColor: Colors[theme].card }]}>
             <Text style={styles.info}>Not signed in</Text>
           </View>
         )}
