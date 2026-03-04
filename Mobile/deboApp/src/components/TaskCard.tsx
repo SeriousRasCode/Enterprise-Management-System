@@ -1,6 +1,8 @@
 import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import { Link } from 'expo-router';
+import { IconSymbol } from '@/components/ui/icon-symbol';
+import { Colors } from '@/constants/theme';
 
 interface TaskCardProps {
   id: string;
@@ -14,12 +16,23 @@ const TaskCard: React.FC<TaskCardProps> = ({ id, title, projectName, dueDate, st
   return (
     <Link href={`/(tabs)/task/${id}`} asChild>
       <TouchableOpacity style={styles.card}>
-        <Text style={styles.title}>{title}</Text>
-        <Text style={styles.projectName}>{projectName}</Text>
-        <Text style={styles.dueDate}>Due: {dueDate}</Text>
-        <Text style={styles.status}>Status:</Text>
-        <View style={styles.statusBar}>
-            <View style={[styles.statusFill, { width: `${status}%` }]} />
+        <View style={styles.cardRow}>
+          <IconSymbol name="clipboard.fill" size={24} color={Colors.light.tint} />
+          <View style={styles.cardContent}>
+            <Text style={styles.title}>{title}</Text>
+            <View style={styles.metaRow}>
+              <IconSymbol name="folder.fill" size={14} color={Colors.light.icon} />
+              <Text style={styles.projectName}>{projectName}</Text>
+            </View>
+            <View style={styles.metaRow}>
+              <IconSymbol name="calendar" size={14} color={Colors.light.icon} />
+              <Text style={styles.dueDate}>Due: {dueDate}</Text>
+            </View>
+            <Text style={styles.status}>Status:</Text>
+            <View style={styles.statusBar}>
+              <View style={[styles.statusFill, { width: `${status}%` }]} />
+            </View>
+          </View>
         </View>
       </TouchableOpacity>
     </Link>
@@ -38,6 +51,15 @@ const styles = StyleSheet.create({
     shadowRadius: 4,
     elevation: 3,
   },
+  cardRow: {
+    flexDirection: 'row',
+    alignItems: 'flex-start',
+    gap: 12,
+  },
+  cardContent: {
+    flex: 1,
+    marginLeft: 12,
+  },
   title: {
     fontSize: 18,
     fontWeight: 'bold',
@@ -45,12 +67,17 @@ const styles = StyleSheet.create({
   projectName: {
     fontSize: 14,
     color: 'gray',
-    marginTop: 4,
+    marginLeft: 4,
   },
   dueDate: {
     fontSize: 12,
     color: 'gray',
-    marginTop: 8,
+    marginLeft: 4,
+  },
+  metaRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginTop: 4,
   },
   status: {
     fontSize: 12,

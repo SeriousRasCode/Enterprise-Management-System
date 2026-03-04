@@ -1,5 +1,5 @@
 import { create } from 'zustand';
-import api from '../services/api';
+import api, { taskAPI, projectAPI } from '../services/api';
 interface Task {
   id: string;
   title: string;
@@ -7,7 +7,7 @@ interface Task {
   progress: number;
   projectName: string;
   dueDate: string;
-  status: string;
+  status: number; // percentage value for progress bar
   // Add other task properties as needed
 }
 
@@ -33,8 +33,48 @@ const useTaskStore = create<TaskState>((set, get) => ({
   fetchTasks: async () => {
     set({ loading: true, error: null });
     try {
-      const response = await api.get('/tasks/my-tasks');
-      set({ tasks: response.data as Task[], loading: false });
+      // mimic web logic: fetch user's projects then tasks per project
+      const projectsResponse = await projectAPI.getMyProjects();
+      console.log('projectsResponse raw', projectsResponse);
+      const body: any = projectsResponse?.data;
+      let projectsList: any[] = [];
+      if (body && body.success && Array.isArray(body.data)) {
+        projectsList = body.data;
+      } else if (Array.isArray(body)) {
+        projectsList = body;
+      } else if (body && Array.isArray(body.data)) {
+        // fallback when response is {data: [...]}
+        projectsList = body.data;
+      }
+      console.log('projectsList extracted', projectsList);
+
+      const allTasksPromises = projectsList.map(async (proj) => {
+        try {
+          const resp = await taskAPI.getTasksByProject(proj.id);
+          let projTasks: any[] = [];
+          if (Array.isArray(resp)) {
+            projTasks = resp;
+          } else if (resp.data && Array.isArray(resp.data)) {
+            projTasks = resp.data;
+          }
+          return projTasks.map((t) => ({
+            id: String(t.id),
+            title: t.title || t.name || '',
+            description: t.description || '',
+            progress: t.progress_percentage ?? t.progress ?? 0,
+            projectName: proj.name,
+            dueDate: t.due_date || t.dueDate || '',
+            status: t.progress_percentage ?? t.progress ?? 0,
+          }));
+        } catch (err) {
+          console.error(`error fetching tasks for project ${proj.id}`, err);
+          return [];
+        }
+      });
+
+      const nested = await Promise.all(allTasksPromises);
+      const flat = nested.flat();
+      set({ tasks: flat as Task[], loading: false });
     } catch (e) {
       console.error('Failed to fetch tasks:', e);
       set({ error: 'Failed to fetch tasks', loading: false });
@@ -43,27 +83,120 @@ const useTaskStore = create<TaskState>((set, get) => ({
   fetchTaskById: async (id: string) => {
     set({ loadingCurrentTask: true, error: null });
     try {
-      const response = await api.get(`/task/${id}`);
-      set({ currentTask: response.data as Task, loadingCurrentTask: false });
+      // if we already have tasks loaded, use that first
+      const existing = get().tasks.find((t) => t.id === id);
+      if (existing) {
+        set({ currentTask: existing, loadingCurrentTask: false });
+        return;
+      }
+      // otherwise replicate fetchTasks logic but stop early when found
+      const projectsResponse = await projectAPI.getMyProjects();
+      const body: any = projectsResponse?.data;
+      let projectsList: any[] = [];
+      if (body && body.success && Array.isArray(body.data)) {
+        projectsList = body.data;
+      } else if (Array.isArray(body)) {
+        projectsList = body;
+      } else if (body && Array.isArray(body.data)) {
+        projectsList = body.data;
+      }
+
+      for (const proj of projectsList) {
+        try {
+          const resp = await taskAPI.getTasksByProject(proj.id);
+          let projTasks: any[] = [];
+          if (Array.isArray(resp)) {
+            projTasks = resp;
+          } else if (resp.data && Array.isArray(resp.data)) {
+            projTasks = resp.data;
+          }
+          const found = projTasks.find((t) => String(t.id) === id);
+          if (found) {
+            const taskObj: Task = {
+              id: String(found.id),
+              title: found.title || found.name || '',
+              description: found.description || '',
+              progress: found.progress_percentage ?? found.progress ?? 0,
+              projectName: proj.name,
+              dueDate: found.due_date || found.dueDate || '',
+              status: found.progress_percentage ?? found.progress ?? 0,
+            };
+            set({ currentTask: taskObj, loadingCurrentTask: false });
+            return;
+          }
+        } catch (err) {
+          console.error(`error fetching tasks for project ${proj.id}`, err);
+        }
+      }
+      set({
+        currentTask: null,
+        loadingCurrentTask: false,
+        error: `Task ${id} not found`,
+      });
     } catch (e) {
       console.error(`Failed to fetch task ${id}:`, e);
       set({ error: `Failed to fetch task ${id}`, loadingCurrentTask: false });
     }
   },
   updateTaskStatus: async (id: string, status: number, updateNote?: string) => {
+    // ensure status is bounded
+    const normalizedStatus = Math.min(Math.max(status, 0), 100);
     try {
-      const response = await api.patch(`/tasks/${id}/progress`, { progress_percentage: status, update_note: updateNote });
-      const updatedTask = response.data as Task;
+      const response = await taskAPI.updateProgress(Number(id), {
+        progress_percentage: normalizedStatus,
+        update_note: updateNote || '',
+      });
 
-      set((state) => ({
-        currentTask: updatedTask,
-        tasks: state.tasks.map(task =>
-          task.id === id ? updatedTask : task
-        ),
-      }));
+      if (!response || !response.data) {
+        console.warn(`updateTaskStatus: response empty for task ${id}`);
+        return;
+      }
+
+      // normalize returned object into our Task shape, similar to fetch logic
+      const raw: any = response.data;
+      const updatedTask: Task = {
+        id: String(raw.id ?? id),
+        title: raw.title || raw.name || '',
+        description: raw.description || '',
+        progress: raw.progress_percentage ?? raw.progress ?? normalizedStatus,
+        projectName: raw.projectName || raw.project_name || '',
+        dueDate: raw.due_date || raw.dueDate || '',
+        status: raw.progress_percentage ?? raw.progress ?? normalizedStatus,
+      };
+
+      set((state) => {
+        const mergedTasks = state.tasks.map((task) => {
+          if (task.id !== id) return task;
+
+          const merged: Task = {
+            id: task.id,
+            title: (raw.title || raw.name) ?? task.title,
+            description: raw.description ?? task.description,
+            progress:
+              raw.progress_percentage ?? raw.progress ?? normalizedStatus ?? task.progress,
+            projectName: raw.projectName || raw.project_name || task.projectName,
+            dueDate: raw.due_date || raw.dueDate || task.dueDate,
+            status:
+              raw.progress_percentage ?? raw.progress ?? normalizedStatus ?? task.status,
+          };
+
+          return merged;
+        });
+
+        const currentTask =
+          state.currentTask && state.currentTask.id === id
+            ? mergedTasks.find((t) => t.id === id) ?? state.currentTask
+            : state.currentTask;
+
+        return {
+          currentTask,
+          tasks: mergedTasks,
+        };
+      });
     } catch (e) {
       console.error(`Failed to update task ${id}:`, e);
       // Optionally set an error state
+      set({ error: `Failed to update task ${id}` });
     }
   },
 }));

@@ -20,6 +20,12 @@ const MAPPING = {
   'person.fill': 'person',
   'chevron.left.forwardslash.chevron.right': 'code',
   'chevron.right': 'chevron-right',
+  'chevron.left': 'chevron-left',
+  'folder.fill': 'folder',
+  'calendar': 'calendar-today',
+  'clock.fill': 'access-time',
+  'flag.fill': 'flag',
+  'info.circle': 'info',
 } as IconMapping;
 
 /**

@@ -3,10 +3,10 @@ import { View, Text, StyleSheet, TextInput } from 'react-native';
 import useAuthStore from '@/src/context/AuthStore';
 import ActionBar from '@/components/ui/action-bar';
 import Button from '@/components/ui/button';
-import api from '../services/api';
+import { userAPI } from '../services/api';
 
 const UpdateProfileScreen = ({ navigation }) => {
-  const { user, updateUser } = useAuthStore();
+  const { user, refreshUser } = useAuthStore();
   const [fullName, setFullName] = useState(user?.full_name || '');
   const [email, setEmail] = useState(user?.email || '');
   const [error, setError] = useState('');
@@ -14,11 +14,11 @@ const UpdateProfileScreen = ({ navigation }) => {
 
   const handleUpdate = async () => {
     try {
-      const response = await api.put('/users/update-me', { full_name: fullName, email });
-      const updatedUser = response.data;
-      // The updateUser function updates the user in the store
-      updateUser(updatedUser);
-      setSuccess('Profile updated successfully!');
+      await userAPI.updateProfile({ full_name: fullName, email });
+      // refresh the stored user information (including role/team)
+      await refreshUser();
+      // return to profile view after successful update
+      navigation.back();
     } catch (err) {
       setError('Failed to update profile.');
       console.error(err);
@@ -27,7 +27,7 @@ const UpdateProfileScreen = ({ navigation }) => {
 
   return (
     <>
-      <ActionBar title="Update Profile" />
+      <ActionBar title="Update Profile" showBack onBack={() => navigation.back()} />
       <View style={styles.container}>
         <View style={styles.card}>
           <Text style={styles.label}>Full Name</Text>

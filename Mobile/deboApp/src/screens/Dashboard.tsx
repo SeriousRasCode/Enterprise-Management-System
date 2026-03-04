@@ -9,7 +9,9 @@ const DashboardScreen = () => {
   const [refreshing, setRefreshing] = useState(false);
 
   useEffect(() => {
-    fetchTasks();
+    fetchTasks().then(() => {
+      console.log('Dashboard fetched tasks:', tasks);
+    }).catch((e) => console.error('Dashboard fetchTasks error', e));
   }, [fetchTasks]);
 
   const onRefresh = useCallback(() => {

@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { View, Text, StyleSheet, TextInput } from 'react-native';
 import ActionBar from '@/components/ui/action-bar';
 import Button from '@/components/ui/button';
-import api from '../services/api';
+import { userAPI } from '../services/api';
 
 const ChangePasswordScreen = ({ navigation }) => {
   const [currentPassword, setCurrentPassword] = useState('');
@@ -12,7 +12,7 @@ const ChangePasswordScreen = ({ navigation }) => {
 
   const handleChangePassword = async () => {
     try {
-      await api.put('/users/me/password', { currentPassword, newPassword });
+      await userAPI.changePassword({ currentPassword, newPassword });
       setSuccess('Password changed successfully!');
       setCurrentPassword('');
       setNewPassword('');
@@ -24,7 +24,7 @@ const ChangePasswordScreen = ({ navigation }) => {
 
   return (
     <>
-      <ActionBar title="Change Password" />
+      <ActionBar title="Change Password" showBack onBack={() => navigation.back()} />
       <View style={styles.container}>
         <View style={styles.card}>
           <Text style={styles.label}>Current Password</Text>

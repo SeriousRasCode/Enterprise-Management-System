@@ -10,7 +10,7 @@ export default function CustomTabBar({ state, descriptors, navigation }: BottomT
       <View style={styles.container}>
         {state.routes.map((route, index) => {
           // Only display top-level tabs we intentionally added to the layout
-          const allowed = ['index', 'task', 'profile'];
+          const allowed = ['index', 'task', 'projects', 'profile'];
           if (!allowed.includes(route.name)) return null;
 
           const isFocused = state.index === index;
