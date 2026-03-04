@@ -1,5 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { View, Text, StyleSheet, ActivityIndicator } from 'react-native';
+import { useColorScheme } from '@/hooks/use-color-scheme';
+import { Colors } from '@/constants/theme';
 import ActionBar, { ACTION_BAR_HEIGHT } from '@/components/ui/action-bar';
 import { useRouter } from 'expo-router';
 import Button from '@/components/ui/button';
@@ -58,11 +60,16 @@ const TaskDetailScreen: React.FC<TaskDetailScreenProps> = ({ taskId }) => {
     updateTaskStatus(taskId, status);
   }
 
+  const theme = useColorScheme() ?? 'light';
   return (
     <>
       <ActionBar title={currentTask.title} showBack onBack={() => router.back()} />
-      <View style={[styles.container, { paddingTop: ACTION_BAR_HEIGHT }]}>
-      <View style={[styles.card]}>
+      <View
+        style={[
+          styles.container,
+          { paddingTop: ACTION_BAR_HEIGHT, backgroundColor: Colors[theme].background },
+        ]}>
+        <View style={[styles.card, { backgroundColor: Colors[theme].card }]}>
         <Text style={styles.title}>{currentTask.title}</Text>
         <View style={styles.metaRow}>
           <IconSymbol name="folder.fill" size={18} color={Colors.light.tint} />

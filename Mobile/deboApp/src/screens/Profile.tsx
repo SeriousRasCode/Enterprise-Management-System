@@ -1,5 +1,7 @@
 import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
+import { useColorScheme } from '@/hooks/use-color-scheme';
+import { Colors } from '@/constants/theme';
 import useAuthStore from '@/src/context/AuthStore';
 import ActionBar, { ACTION_BAR_HEIGHT } from '@/components/ui/action-bar';
 import Button from '@/components/ui/button';
@@ -7,10 +9,15 @@ import Button from '@/components/ui/button';
 const ProfileScreen = ({ navigation }: { navigation: any }) => {
   const { user, logout } = useAuthStore();
 
+  const theme = useColorScheme() ?? 'light';
   return (
     <>
       <ActionBar title="Profile" />
-      <View style={[styles.container, { paddingTop: 0 }]}>
+      <View
+        style={[
+          styles.container,
+          { paddingTop: 0, backgroundColor: Colors[theme].background },
+        ]}>
       <View style={styles.content}>
         {user ? (
           <View style={styles.card}>

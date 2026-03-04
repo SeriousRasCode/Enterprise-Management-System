@@ -2,10 +2,35 @@ import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import Constants from 'expo-constants';
 
-// base URL is driven by Expo constants (extra) or hard-coded fallback
-const API_URL =
-  Constants.manifest?.extra?.apiUrl ||
-  'https://54c4-196-189-127-151.ngrok-free.app/api';
+// base URL is driven by Expo constants (extra) which are injected at
+// build time via the "EXPO_PUBLIC_" prefix (e.g. EXPO_PUBLIC_API_URL).
+// When running a local release build (`npx expo run:android --variant release`)
+// the shell environment must contain this variable – Expo doesn't read the
+// .env file automatically for production builds. You can either export it
+// manually or add it to `app.config.js`/`eas.json`.
+//
+// Provide a sensible fallback during development so the app doesn’t crash
+// if the value is missing, but warn loudly in release logs.
+let API_URL = Constants.expoConfig?.extra?.apiUrl?.toString() || '';
+
+// expo go (and sometimes `expo start`) will not substitute environment
+// variables inside app.json. If you see the literal string the user
+// put (`${EXPO_PUBLIC_API_URL}`) we treat that as unset.
+if (API_URL.startsWith('${')) {
+  console.warn(
+    'expoConfig.extra.apiUrl appears to be a placeholder:',
+    API_URL,
+    '- did you start the server with EXPO_PUBLIC_API_URL in your shell?'
+  );
+  API_URL = '';
+}
+
+if (!API_URL) {
+  const msg =
+    'API base URL is missing. Ensure EXPO_PUBLIC_API_URL is exported before running `expo start` or `expo run`.';
+  console.warn(msg);
+  API_URL = 'http://localhost:3333';
+}
 
 const api = axios.create({
   baseURL: API_URL,

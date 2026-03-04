@@ -1,5 +1,6 @@
 import { create } from 'zustand';
 import api, { taskAPI, projectAPI } from '../services/api';
+import useAuthStore from './AuthStore';
 interface Task {
   id: string;
   title: string;
@@ -142,6 +143,20 @@ const useTaskStore = create<TaskState>((set, get) => ({
     // ensure status is bounded
     const normalizedStatus = Math.min(Math.max(status, 0), 100);
     try {
+      // make sure current user is assigned to this task before updating progress;
+      // backend returns 403 if not assigned. Web UI likely handled it implicitly.
+      const currentUser = useAuthStore.getState().user;
+      if (currentUser) {
+        try {
+          await taskAPI.assignTask(Number(id), Number(currentUser.id));
+        } catch (assignErr: any) {
+          // ignore duplicate assignment or other errors; 403 will be thrown later
+          if (assignErr.response && assignErr.response.status !== 409) {
+            console.warn('assignTask error', assignErr);
+          }
+        }
+      }
+
       const response = await taskAPI.updateProgress(Number(id), {
         progress_percentage: normalizedStatus,
         update_note: updateNote || '',
