@@ -578,7 +578,7 @@ paths:
       tags: [Setup]
       summary: Initialize DB (db-setup.js runs on its own server)
       servers:
-        - url: http://localhost:3000
+        - url: https://enterprise-management-system-1-puwg.onrender.com
       responses:
         "200":
           description: Database created & tables initialized
