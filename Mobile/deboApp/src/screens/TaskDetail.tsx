@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, StyleSheet, ActivityIndicator } from 'react-native';
+import { View, Text, StyleSheet, ActivityIndicator, Alert } from 'react-native';
 import { useColorScheme } from '@/hooks/use-color-scheme';
 import { Colors } from '@/constants/theme';
 import ActionBar, { ACTION_BAR_HEIGHT } from '@/components/ui/action-bar';
@@ -7,6 +7,8 @@ import { useRouter } from 'expo-router';
 import Button from '@/components/ui/button';
 import Slider from '@react-native-community/slider';
 import useTaskStore from '@/src/context/TaskStore';
+import useAuthStore from '@/src/context/AuthStore';
+import { taskAPI } from '@/src/services/api';
 import { IconSymbol } from '@/components/ui/icon-symbol';
 
 
@@ -24,15 +26,34 @@ const TaskDetailScreen: React.FC<TaskDetailScreenProps> = ({ taskId }) => {
     error,
   } = useTaskStore();
 
+  const theme = useColorScheme() ?? 'light';
+  const colors = Colors[theme];
+  const [isAssigned, setIsAssigned] = useState(false);
   const [status, setStatus] = useState(0);
 
   useEffect(() => {
     fetchTaskById(taskId);
   }, [taskId, fetchTaskById]);
 
+  // when current task loads, check whether user is assigned
   useEffect(() => {
     if (currentTask) {
       setStatus(currentTask.status);
+      taskAPI
+        .getAssignments(Number(currentTask.id))
+        .then((resp) => {
+          const body: any = resp?.data;
+          let arr: any[] = [];
+          if (Array.isArray(body)) arr = body;
+          else if (body && Array.isArray(body.data)) arr = body.data;
+          const userId = useAuthStore.getState().user?.id;
+          if (userId && arr.find((u) => String(u.id) === String(userId))) {
+            setIsAssigned(true);
+          } else {
+            setIsAssigned(false);
+          }
+        })
+        .catch(() => setIsAssigned(false));
     }
   }, [currentTask]);
 
@@ -55,42 +76,63 @@ const TaskDetailScreen: React.FC<TaskDetailScreenProps> = ({ taskId }) => {
   const handleStatusChange = (newStatus: number) => {
     setStatus(newStatus);
   };
-  
-  const saveStatus = () => {
-    updateTaskStatus(taskId, status);
-  }
 
-  const theme = useColorScheme() ?? 'light';
+  const saveStatus = async (newStatus?: number) => {
+    // if user clicked a button, update the value accordingly
+    const value = typeof newStatus === 'number' ? newStatus : status;
+    if (!isAssigned) {
+      Alert.alert('Update denied', 'You must be assigned to this task to change progress.');
+      return;
+    }
+    try {
+      await updateTaskStatus(taskId, value);
+      setStatus(value);
+    } catch (err: any) {
+      // backend may still reject if race or stale assignment
+      if (err.response && err.response.status === 403) {
+        Alert.alert('Update denied', 'You must be assigned to this task to change progress.');
+      } else {
+        console.error(err);
+      }
+    }
+  };
+
+  
   return (
     <>
       <ActionBar title={currentTask.title} showBack onBack={() => router.back()} />
       <View
         style={[
           styles.container,
-          { paddingTop: ACTION_BAR_HEIGHT, backgroundColor: Colors[theme].background },
+          { paddingTop: ACTION_BAR_HEIGHT, backgroundColor: colors.background },
         ]}>
         <View style={[styles.card, { backgroundColor: Colors[theme].card }]}>
         <Text style={styles.title}>{currentTask.title}</Text>
         <View style={styles.metaRow}>
-          <IconSymbol name="folder.fill" size={18} color={Colors.light.tint} />
-          <Text style={styles.projectName}>{currentTask.projectName}</Text>
+          <IconSymbol name="folder.fill" size={18} color={colors.tint} />
+          <Text style={[styles.projectName, { color: colors.text }]}>{currentTask.projectName}</Text>
         </View>
         {currentTask.description ? (
           <View style={styles.metaRow}>
-            <IconSymbol name="info.circle" size={16} color={Colors.light.icon} />
-            <Text style={styles.description}>{currentTask.description}</Text>
+            <IconSymbol name="info.circle" size={16} color={colors.icon} />
+            <Text style={[styles.description, { color: colors.text }]}>{currentTask.description}</Text>
           </View>
         ) : null}
         <View style={styles.metaRow}>
-          <IconSymbol name="calendar" size={16} color={Colors.light.icon}  />
-          <Text style={styles.dueDate}>Due: {currentTask.dueDate}</Text>
+          <IconSymbol name="calendar" size={16} color={colors.icon}  />
+          <Text style={[styles.dueDate, { color: colors.text }]}>Due: {currentTask.dueDate}</Text>
         </View>
 
         <View style={styles.statusContainer}>
-          <Text style={styles.statusText}>Status: {Math.round(status)}%</Text>
+          <Text style={[styles.statusText, { color: colors.text }]}>Status: {Math.round(status)}%</Text>
           {/* horizontal progress bar */}
           <View style={styles.progressBarBackground}>
-            <View style={[styles.progressBarFill, { width: `${status}%` }]} />
+            <View
+              style={[
+                styles.progressBarFill,
+                { width: `${status}%`, backgroundColor: colors.tint },
+              ]}
+            />
           </View>
           <Slider
             style={styles.slider}
@@ -98,15 +140,16 @@ const TaskDetailScreen: React.FC<TaskDetailScreenProps> = ({ taskId }) => {
             maximumValue={100}
             step={1}
             value={status}
-            minimumTrackTintColor={Colors.light.tint}
-            maximumTrackTintColor="#ddd"
-            thumbTintColor={Colors.light.tint}
+            minimumTrackTintColor={isAssigned ? colors.tint : '#999'}
+            maximumTrackTintColor={colors.background}
+            thumbTintColor={isAssigned ? colors.tint : '#999'}
             onValueChange={handleStatusChange}
-            onSlidingComplete={saveStatus}
+            onSlidingComplete={() => saveStatus()}
+            disabled={!isAssigned}
           />
           <View style={styles.buttonsContainer}>
-            <Button title="Started" onPress={() => updateTaskStatus(taskId, 50)} style={{ flex: 1, marginRight: 8 }} />
-            <Button title="Completed" onPress={() => updateTaskStatus(taskId, 100)} style={{ flex: 1, marginLeft: 8 }} />
+            <Button title="Started" onPress={() => saveStatus(50)} style={{ flex: 1, marginRight: 8 }} />
+            <Button title="Completed" onPress={() => saveStatus(100)} style={{ flex: 1, marginLeft: 8 }} />
           </View>
         </View>
       </View>
@@ -130,7 +173,6 @@ const styles = StyleSheet.create({
   },
   progressBarFill: {
     height: '100%',
-    backgroundColor: Colors.light.tint,
     borderRadius: 5,
   },
   centered: {
@@ -139,7 +181,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   card: {
-    backgroundColor: 'white',
     padding: 16,
     borderRadius: 8,
     shadowColor: '#000',

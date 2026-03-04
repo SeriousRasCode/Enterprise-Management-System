@@ -4,6 +4,8 @@ import useAuthStore from '@/src/context/AuthStore';
 import ActionBar from '@/components/ui/action-bar';
 import Button from '@/components/ui/button';
 import { userAPI } from '../services/api';
+import { useColorScheme } from '@/hooks/use-color-scheme';
+import { Colors } from '@/constants/theme';
 
 const UpdateProfileScreen = ({ navigation }) => {
   const { user, refreshUser } = useAuthStore();

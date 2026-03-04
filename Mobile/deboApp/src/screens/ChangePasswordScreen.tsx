@@ -3,6 +3,8 @@ import { View, Text, StyleSheet, TextInput } from 'react-native';
 import ActionBar from '@/components/ui/action-bar';
 import Button from '@/components/ui/button';
 import { userAPI } from '../services/api';
+import { useColorScheme } from '@/hooks/use-color-scheme';
+import { Colors } from '@/constants/theme';
 
 const ChangePasswordScreen = ({ navigation }) => {
   const [currentPassword, setCurrentPassword] = useState('');
@@ -22,11 +24,12 @@ const ChangePasswordScreen = ({ navigation }) => {
     }
   };
 
+  const theme = useColorScheme() ?? 'light';
   return (
     <>
       <ActionBar title="Change Password" showBack onBack={() => navigation.back()} />
-      <View style={styles.container}>
-        <View style={styles.card}>
+      <View style={[styles.container, { backgroundColor: Colors[theme].background }]}>
+        <View style={[styles.card, { backgroundColor: Colors[theme].card }]}>
           <Text style={styles.label}>Current Password</Text>
           <TextInput
             style={styles.input}

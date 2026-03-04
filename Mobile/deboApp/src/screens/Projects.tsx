@@ -4,6 +4,7 @@ import { projectAPI } from '../services/api';
 import ActionBar from '@/components/ui/action-bar';
 import { IconSymbol } from '@/components/ui/icon-symbol';
 import { Colors } from '@/constants/theme';
+import { useColorScheme } from '@/hooks/use-color-scheme';
 import TaskCard from '@/src/components/TaskCard';
 
 interface Project {
@@ -53,10 +54,11 @@ export default function ProjectsScreen() {
     fetchProjects().finally(() => setRefreshing(false));
   }, [fetchProjects]);
 
+  const theme = useColorScheme() ?? 'light';
   return (
     <>
       <ActionBar title="Projects" />
-      <View style={styles.container}>
+      <View style={[styles.container, { backgroundColor: Colors[theme].background }]}>
         {loading && !refreshing ? (
           <View style={styles.center}>
             <ActivityIndicator size="large" />
@@ -77,12 +79,12 @@ export default function ProjectsScreen() {
               </View>
             }
             renderItem={({ item }) => (
-              <TouchableOpacity style={styles.card} activeOpacity={0.8}>
+              <TouchableOpacity style={[styles.card, { backgroundColor: Colors[theme].card }]} activeOpacity={0.8}>
                 <View style={styles.cardRow}>
                   <IconSymbol name="folder.fill" size={28} color={Colors.light.tint} />
                   <View style={styles.cardContent}>
-                    <Text style={styles.title}>{item.name}</Text>
-                    {item.description ? <Text style={styles.desc}>{item.description}</Text> : null}
+                    <Text style={[styles.title, { color: Colors[theme].text }]}>{item.name}</Text>
+                    {item.description ? <Text style={[styles.desc, { color: Colors[theme].text }]}>{item.description}</Text> : null}
                     <View style={styles.meta}>
                       <View style={styles.metaItem}>
                         <IconSymbol name="flag.fill" size={16} color={Colors.light.icon} />
@@ -121,7 +123,7 @@ const styles = StyleSheet.create({
     paddingTop: 8,
   },
   card: {
-    backgroundColor: 'white',
+    backgroundColor: Colors.light.card,
     padding: 16,
     borderRadius: 8,
     marginBottom: 12,
@@ -141,7 +143,7 @@ const styles = StyleSheet.create({
   },
   metaText: {
     fontSize: 12,
-    color: '#666',
+    color: '#666', // overridden inline based on theme
   },
   metaItem: {
     flexDirection: 'row',
