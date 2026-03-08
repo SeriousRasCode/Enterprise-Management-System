@@ -1,19 +1,26 @@
-import SibApiV3Sdk from "sib-api-v3-sdk";
+import nodemailer from "nodemailer";
+import dns from "dns";
 
+dns.setDefaultResultOrder("ipv4first");
 export const sendResetEmail = async (email, token, fullName) => {
-  const client = SibApiV3Sdk.ApiClient.instance;
-  client.authentications["api-key"].apiKey = process.env.BREVO_API_KEY;
-
-  const apiInstance = new SibApiV3Sdk.TransactionalEmailsApi();
-
+  const transporter = nodemailer.createTransport({
+    host: "smtp.gmail.com",
+    port: 587,
+    secure: false,
+    family: 4,
+    auth: {
+      user: process.env.EMAIL_USER,
+      pass: process.env.EMAIL_PASS,
+    },
+  });
   const safeName = fullName ? fullName : "User";
   const resetLink = `${process.env.FRONTEND_URL}/reset-password?token=${token}`;
 
-  const sendSmtpEmail = {
-    sender: { email: process.env.EMAIL_USER, name: "Enterprise Support" },
-    to: [{ email }],
+  await transporter.sendMail({
+    from: `"Enterprise Support" <${process.env.EMAIL_USER}>`,
+    to: email,
     subject: "Password Reset Request",
-    htmlContent: `
+    html: `
       <div style="margin:0; padding:0; background-color:#f4f6f8; font-family: Arial, sans-serif;">
         <table align="center" width="100%" cellpadding="0" cellspacing="0" style="padding:40px 0;">
           <tr>
@@ -81,7 +88,7 @@ export const sendResetEmail = async (email, token, fullName) => {
                 <!-- Footer -->
                 <tr>
                   <td style="background:#f9fafb; padding:15px; text-align:center; font-size:12px; color:#999999;">
-                    © ${new Date().getFullYear()} Enterprise Management System<br/>
+                    © ${new Date().getFullYear()} Project and Task Management System<br/>
                     Secure • Reliable • Professional
                   </td>
                 </tr>
@@ -93,13 +100,5 @@ export const sendResetEmail = async (email, token, fullName) => {
         </table>
       </div>
     `,
-  };
-
-  try {
-    await apiInstance.sendTransacEmail(sendSmtpEmail);
-    console.log("Password reset email sent successfully to:", email);
-  } catch (error) {
-    console.error("Error sending email:", error);
-    throw new Error("Could not send reset email");
-  }
+  });
 };
