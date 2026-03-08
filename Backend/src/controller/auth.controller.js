@@ -52,25 +52,28 @@ export const register = async (req, res) => {
 
 export const forgotPassword = async (req, res) => {
   try {
-    const { email } = req.body;
+    const email = req.body.email?.trim().toLowerCase();
 
     if (!email) {
       return res.status(400).json({ message: "Email is required" });
     }
 
     const [[user]] = await pool.query(
-      `SELECT id, email, full_name FROM users 
+      `SELECT id, email, full_name
+       FROM users
        WHERE email = ? AND is_active = true`,
-      [email],
+      [email]
     );
 
-    // Always to return same response (prevent enumeration)
+    console.log("User found:", user);
+
     if (!user) {
       return res.json({
         message: "If the email exists, reset instructions sent",
       });
     }
-   const rawToken = crypto.randomBytes(32).toString("hex");
+
+    const rawToken = crypto.randomBytes(32).toString("hex");
 
     const hashedToken = crypto
       .createHash("sha256")
@@ -81,15 +84,12 @@ export const forgotPassword = async (req, res) => {
 
     await pool.query(
       `UPDATE users
-       SET reset_token_hash = ?, 
-           reset_token_expiry = ?
+       SET reset_token_hash = ?, reset_token_expiry = ?
        WHERE id = ?`,
-      [hashedToken, expiry, user.id],
+      [hashedToken, expiry, user.id]
     );
 
-    // Send RAW token in email
     await sendResetEmail(user.email, rawToken, user.full_name);
-console.log(user.full_name);
 
     res.json({
       message: "If the email exists, reset instructions sent",
