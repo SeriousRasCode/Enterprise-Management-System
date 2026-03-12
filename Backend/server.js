@@ -13,8 +13,6 @@ app.get("/api", async (req, res) => {
     res.status(500).json({ message: "Database error", error: err.message });
   }
 });
-console.log(process.env.EMAIL_USER);
-console.log(process.env.EMAIL_PASS);
 app.listen(PORT, () => {
   console.log(`Server running at http://localhost:${PORT}`);
 });

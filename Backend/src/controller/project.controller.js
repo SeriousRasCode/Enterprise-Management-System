@@ -1,4 +1,13 @@
-import pool from "../config/db.js";
+import { 
+  createProjectModel, 
+  getAllProjectsAdminModel, 
+  getProjectByIdModel, 
+  updateProjectModel, 
+  getMyProjectsModel, 
+  deleteProjectModel 
+} from "../model/project.model.js";
+import { triggerEvent } from "../utils/eventEngine.js";
+
 export const createProject = async (req, res) => {
   try {
     const { name, description, start_date, end_date, team_id } = req.body;
@@ -11,14 +20,18 @@ export const createProject = async (req, res) => {
 
     const managerId = req.user.userId;
 
-    const [result] = await pool.query(
-      `
-      INSERT INTO projects
-      (name, description, manager_id, team_id, start_date, end_date)
-      VALUES (?, ?, ?, ?, ?, ?)
-      `,
-      [name, description, managerId, team_id, start_date, end_date]
-    );
+    const result = await createProjectModel(name, description, start_date, end_date, managerId, team_id);
+
+    await triggerEvent({
+      actor_id: managerId,
+      action_type: "PROJECT_CREATED",
+      entity_type: "project",
+      entity_id: result.insertId,
+      description: `Project created: ${name}`,
+      notify_users: [],
+      notification_title: "Project Created",
+      notification_message: "A new project was created"
+    });
 
     res.status(201).json({
       message: "Project created successfully",
@@ -31,27 +44,9 @@ export const createProject = async (req, res) => {
   }
 };
 
-
-
-
 export const getAllProjectsAdmin = async (req, res) => {
   try {
-    const [projects] = await pool.query(`
-      SELECT 
-        p.id,
-        p.name,
-        p.description,
-        p.status,
-        p.start_date,
-        p.end_date,
-        p.created_at,
-        t.name AS team_name,
-        u.full_name AS manager_name
-      FROM projects p
-      JOIN teams t ON t.id = p.team_id
-      JOIN users u ON u.id = p.manager_id
-      ORDER BY p.created_at DESC
-    `);
+    const projects = await getAllProjectsAdminModel();
 
     res.json({
       success: true,
@@ -63,6 +58,24 @@ export const getAllProjectsAdmin = async (req, res) => {
   }
 };
 
+export const getProjectById = async (req, res) => {
+  try {
+    const { projectId } = req.params;
+    const project = await getProjectByIdModel(projectId);
+
+    if (!project) {
+      return res.status(404).json({ message: "Project not found" });
+    }
+
+    res.json({
+      success: true,
+      data: project
+    });
+  } catch (error) {
+    console.error("Get project error:", error);
+    res.status(500).json({ message: "Server error" });
+  }
+};
 
 export const updateProject = async (req, res) => {
   try {
@@ -80,24 +93,27 @@ export const updateProject = async (req, res) => {
 
     // Ownership check (manager only)
     if (!roles.includes('admin')) {
-      const [[project]] = await pool.query(
-        `SELECT id FROM projects WHERE id = ? AND manager_id = ?`,
-        [projectId, userId]
-      );
+      const project = await getProjectByIdModel(projectId);
 
-      if (!project) {
+      if (!project || project.manager_id !== userId) {
         return res.status(403).json({
           message: 'You can only update your own projects'
         });
       }
     }
 
-    await pool.query(
-      `UPDATE projects
-       SET name = ?, description = ?, status = ?, start_date = ?, end_date = ?
-       WHERE id = ?`,
-      [name, description, status, start_date, end_date, projectId]
-    );
+    await updateProjectModel(projectId, name, description, status, start_date, end_date);
+
+    await triggerEvent({
+      actor_id: userId,
+      action_type: "PROJECT_UPDATED",
+      entity_type: "project",
+      entity_id: projectId,
+      description: `Project updated: ${name}`,
+      notify_users: [],
+      notification_title: "Project Updated",
+      notification_message: "A project you are part of was updated"
+    });
 
     res.json({ message: 'Project updated successfully' });
 
@@ -111,39 +127,7 @@ export const getMyProjects = async (req, res) => {
     const userId = req.user.userId;
     const roles = req.user.roles || [];
 
-    let query = `
-      SELECT DISTINCT
-        p.id,
-        p.name,
-        p.description,
-        p.status,
-        p.start_date,
-        p.end_date,
-        p.manager_id,
-        p.created_at,
-        t.name AS team_name
-      FROM projects p
-      JOIN teams t ON p.team_id = t.id
-      LEFT JOIN team_members tm ON t.id = tm.team_id
-    `;
-
-    let values = [];
-
-    if (roles.includes('Admin')) {
-      // Admin sees everything
-    } 
-    else if (roles.includes('Manager')) {
-      query += ` WHERE p.manager_id = ?`;
-      values.push(userId);
-    } 
-    else if (roles.includes('Member')) {
-      query += ` WHERE tm.user_id = ?`;
-      values.push(userId);
-    }
-
-    query += ` ORDER BY p.created_at DESC`;
-
-    const [projects] = await pool.query(query, values);
+    const projects = await getMyProjectsModel(userId, roles);
 
     res.json({
       success: true,
@@ -155,43 +139,27 @@ export const getMyProjects = async (req, res) => {
     res.status(500).json({ message: error.message });
   }
 };
-// export const getMyProjects = async (req, res) => {
-//   try {
-//     const userId = req.user.userId;
-//     const roles = req.user.roles || [];
 
-//     let query = `
-//       SELECT 
-//         p.id,
-//         p.name,
-//         p.description,
-//         p.status,
-//         p.start_date,
-//         p.end_date,
-//         t.name AS team_name
-//       FROM projects p
-//       JOIN teams t ON p.team_id = t.id
-//     `;
+export const deleteProject = async (req, res) => {
+  try {
+    const { projectId } = req.params;
+    const userId = req.user.userId;
+    const roles = req.user.roles;
 
-//     let values = [];
+    // Ownership check (manager only)
+    if (!roles.includes('admin')) {
+      const project = await getProjectByIdModel(projectId);
 
-//     // 🔐 If not Admin → filter by manager_id
-//     if (!roles.includes('Admin')) {
-//       query += ` WHERE p.manager_id = ?`;
-//       values.push(userId);
-//     }
+      if (!project || project.manager_id !== userId) {
+        return res.status(403).json({
+          message: 'You can only delete your own projects'
+        });
+      }
+    }
 
-//     query += ` ORDER BY p.created_at DESC`;
-
-//     const [projects] = await pool.query(query, values);
-
-//     res.json({
-//       success: true,
-//       count: projects.length,
-//       data: projects
-//     });
-
-//   } catch (error) {
-//     res.status(500).json({ message: error.message });
-//   }
-// };
+    await deleteProjectModel(projectId);
+    res.json({ message: "Project deleted successfully" });
+  } catch (error) {
+    res.status(500).json({ message: "Server error" });
+  }
+};

@@ -2,13 +2,14 @@ import {
   createTaskModel,
   getTasksByProjectModel,
   updateTaskById,
-  deleteTaskById
+  deleteTaskById,
+  getMyTasksModel,
+  getTaskByIdModel
 } from "../model/task.model.js";
 import { createTaskUpdateModel } from "../model/taskUpdate.model.js";
-import { isUserAssignedToTaskModel } from "../model/taskAssignment.model.js";
-import pool from "../config/db.js";
+import { isUserAssignedToTaskModel, getTaskAssignmentsModel } from "../model/taskAssignment.model.js";
 import { updateProjectProgressModel } from "../model/project.model.js";
-import { getMyTasksModel } from "../model/task.model.js";
+import { triggerEvent } from "../utils/eventEngine.js";
 
 
 export const createTask = async (req, res) => {
@@ -43,6 +44,18 @@ export const createTask = async (req, res) => {
       progress_percentage
     );
 await updateProjectProgressModel(projectId);
+
+    await triggerEvent({
+      actor_id: req.user.userId,
+      action_type: "TASK_CREATED",
+      entity_type: "task",
+      entity_id: result.insertId,
+      description: `Task created: ${title}`,
+      notify_users: [],
+      notification_title: "Task Created",
+      notification_message: "A new task was created in your project"
+    });
+
     res.status(201).json({
       message: "Task created successfully",
       taskId: result.insertId
@@ -65,6 +78,22 @@ export const getTasksByProject = async (req, res) => {
   } catch (error) {
     console.error("Get tasks error:", error);
     res.status(500).json({ message: "Failed to fetch tasks" });
+  }
+};
+
+export const getTaskById = async (req, res) => {
+  try {
+    const { taskId } = req.params;
+    const task = await getTaskByIdModel(taskId);
+    
+    if (!task) {
+      return res.status(404).json({ message: "Task not found" });
+    }
+    
+    res.json({ success: true, data: task });
+  } catch (error) {
+    console.error("Get task error:", error);
+    res.status(500).json({ message: "Failed to fetch task" });
   }
 };
 
@@ -97,6 +126,20 @@ export const updateTask = async (req, res) => {
       return res.status(404).json({ message: "Task not found" });
     }
 
+    const assignments = await getTaskAssignmentsModel(taskId);
+    const notifyUsers = assignments.map(a => a.id).filter(id => id !== req.user.userId);
+
+    await triggerEvent({
+      actor_id: req.user.userId,
+      action_type: "TASK_UPDATED",
+      entity_type: "task",
+      entity_id: taskId,
+      description: "Task details were updated",
+      notify_users: notifyUsers,
+      notification_title: "Task Updated",
+      notification_message: "A task you are assigned to was updated"
+    });
+
     res.json({ message: "Task updated successfully" });
 
   } catch (error) {
@@ -114,6 +157,17 @@ export const deleteTask = async (req, res) => {
     if (result.affectedRows === 0) {
       return res.status(404).json({ message: "Task not found" });
     }
+
+    await triggerEvent({
+      actor_id: req.user.userId,
+      action_type: "TASK_DELETED",
+      entity_type: "task",
+      entity_id: taskId,
+      description: "Task was deleted",
+      notify_users: [],
+      notification_title: "Task Deleted",
+      notification_message: "A task was deleted"
+    });
 
     res.json({ message: "Task deleted successfully" });
 
@@ -154,12 +208,7 @@ export const updateTaskProgress = async (req, res) => {
     }
 
     // update task
-    await pool.query(
-      `UPDATE tasks
-       SET status = ?, progress_percentage = ?
-       WHERE id = ?`,
-      [status, progress_percentage, taskId]
-    );
+    await updateTaskById(taskId, status, progress_percentage);
 
     // res.json({
     //   message: "Task updated successfully"
@@ -178,13 +227,25 @@ export const updateTaskProgress = async (req, res) => {
       message: "Task updated and history recorded"
     });
 
-    // update project progress
-const [[task]] = await pool.query(
-  `SELECT project_id FROM tasks WHERE id = ?`,
-  [taskId]
-);
+    const assignments = await getTaskAssignmentsModel(taskId);
+    const notifyUsers = assignments.map(a => a.id).filter(id => id !== userId);
 
-await updateProjectProgressModel(task.project_id);
+    await triggerEvent({
+      actor_id: userId,
+      action_type: "TASK_PROGRESS_UPDATED",
+      entity_type: "task",
+      entity_id: taskId,
+      description: `Task progress updated to ${progress_percentage}%`,
+      notify_users: notifyUsers,
+      notification_title: "Task Progress Updated",
+      notification_message: `Task progress is now ${progress_percentage}%`
+    });
+
+    // update project progress
+    const task = await getTaskByIdModel(taskId);
+    if (task) {
+      await updateProjectProgressModel(task.project_id);
+    }
 
 
   } catch (error) {

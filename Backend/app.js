@@ -13,9 +13,20 @@ import reportRoutes from "./src/routes/report.routes.js";
 import dashboardRoutes from "./src/routes/dashboard.routes.js";
 import adminRoutes from "./src/routes/admin.routes.js";
 import teamRoutes from "./src/routes/team.routes.js";
+import activityRoutes from "./src/routes/activity.routes.js";
+import subtaskAssignmentRoutes from "./src/routes/subtaskAssignment.routes.js";
+import subtaskCommentRoutes from "./src/routes/subtaskComment.routes.js";
+import notificationRoutes from "./src/routes/notification.routes.js";
+import phaseRoutes from "./src/routes/phase.routes.js";
+import taskCommentRoutes from "./src/routes/taskComment.routes.js";
+import attachmentRoutes from "./src/routes/attachment.routes.js";
+import subtaskRoutes from "./src/routes/subtask.routes.js"
 
 const app = express();
-app.use(cors());
+app.use(cors({
+  origin: "http://localhost:5173",
+  credentials: true // Later we will adjust this to our frontend URL
+}));
 
 app.use(express.json());
 app.use('/api/auth', authRoutes);
@@ -27,6 +38,14 @@ app.use('/api/users', userRoutes);
 app.use('/api/dashboard', dashboardRoutes);
 app.use('/api/admin', adminRoutes);
 app.use('/api/teams', teamRoutes);
+app.use('/api/activities', activityRoutes);
+app.use('/api/subtask-assignments', subtaskAssignmentRoutes);
+app.use('/api/subtask-comments', subtaskCommentRoutes);
+app.use('/api/notifications', notificationRoutes);
+app.use('/api/phases', phaseRoutes);
+app.use('/api/task-comments', taskCommentRoutes);
+app.use('/api/attachments', attachmentRoutes);
+app.use("/api", subtaskRoutes);
 
 // Swagger UI -
 try {

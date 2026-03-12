@@ -2,6 +2,7 @@ import {
   assignTaskModel,
   getTaskAssignmentsModel
 } from "../model/taskAssignment.model.js";
+import { triggerEvent } from "../utils/eventEngine.js";
 
 export const assignTask = async (req, res) => {
   try {
@@ -15,7 +16,18 @@ export const assignTask = async (req, res) => {
     }
 
     await assignTaskModel(taskId, userId);
+    await triggerEvent({
+      actor_id: req.user.userId,
+      action_type: "TASK_ASSIGNED",
+      entity_type: "task",
+      entity_id: taskId,
+      description: "Task assigned to user",
 
+      notify_users: [userId],
+
+      notification_title: "New Task Assigned",
+      notification_message: "You have been assigned a new task"
+    });
     res.status(201).json({
       message: "Task assigned successfully"
     });

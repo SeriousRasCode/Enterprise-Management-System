@@ -39,6 +39,14 @@ export const getTasksByProjectModel = async (projectId) => {
   return tasks;
 };
 
+export const getTaskByIdModel = async (taskId) => {
+  const [[task]] = await pool.query(
+    `SELECT * FROM tasks WHERE id = ?`,
+    [taskId]
+  );
+  return task;
+};
+
 export const updateTaskById = async (taskId, status, progress) => {
   const [result] = await pool.query(
     `UPDATE tasks
