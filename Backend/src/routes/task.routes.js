@@ -1,5 +1,5 @@
 import express from "express";
-import { createTask, getTasksByProject, updateTask, deleteTask, updateTaskProgress, getMyTasks} from "../controller/task.controller.js";
+import { createTask, getTasksByProject, updateTask, deleteTask, updateTaskProgress, getMyTasks, getTaskById} from "../controller/task.controller.js";
 import {authenticate} from "../middleware/auth.middleware.js";
 import { authorizeRoles } from "../middleware/role.middleware.js";
 import { getTaskUpdatesModel } from "../model/taskUpdate.model.js";
@@ -45,6 +45,11 @@ router.delete(
   "/:taskId",
   authenticate,
   deleteTask
+);
+router.get(
+  "/:taskId",
+  authenticate,
+  getTaskById
 );
 router.patch(
   "/:taskId/progress",
