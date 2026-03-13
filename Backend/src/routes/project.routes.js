@@ -18,20 +18,15 @@ router.get(
   authorizeRoles("Member", "Manager"),
   getMyProjects
 );
-
 router.post("/create-projects", authenticate, authorizeRoles("Manager"), createProject);
-
 router.get("/all-projects", authenticate, authorizeRoles("Admin"), getAllProjectsAdmin);
-
 router.get("/projects/:projectId", authenticate, getProjectById);
-
 router.put(
   '/update-projects/:projectId',
   authenticate,
   authorizeRoles("Manager"),
   updateProject
 );
-
 router.delete(
   '/projects/:projectId',
   authenticate,
