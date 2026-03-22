@@ -3,7 +3,7 @@ import {
   updateSubtask,
   deleteSubtask,
   updateSubtaskProgress,
-  getSubtaskByIdModel
+  getSubtasksByTaskId
 } from "../model/subtask.model.js";
 import { getTaskAssignmentsModel } from "../model/taskAssignment.model.js";
 
@@ -117,7 +117,7 @@ export const updateSubtaskProgressController = async (req, res) => {
       status
     );
 
-    const subtask = await getSubtaskByIdModel(req.params.id);
+    const subtask = await getSubtasksByTaskId(req.params.id);
     let notifyUsers = [];
     const actorId = req.body.user_id || req.user?.userId;
     if (subtask && subtask.task_id) {
@@ -144,4 +144,14 @@ export const updateSubtaskProgressController = async (req, res) => {
 
   }
 
+};
+
+export const getSubtasksByTaskIdController = async (req, res) => {
+  try {
+    const { taskId } = req.params;
+    const subtasks = await getSubtasksByTaskId(taskId);
+    res.json(subtasks);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
 };

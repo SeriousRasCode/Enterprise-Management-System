@@ -4,12 +4,11 @@ import {
   updateSubtaskController,
   updateSubtaskProgressController,
   deleteSubtaskController,
+  getSubtasksByTaskIdController,
 } from "../controller/subtask.controller.js";
 import { authenticate } from "../middleware/auth.middleware.js";
 import { authorizeRoles } from "../middleware/role.middleware.js";
 const router = express.Router();
-
-//router.post("/create-subtask", authenticate, createSubtaskController);
 
 router.post(
   "/create-subtask/:taskId",authenticate,
@@ -29,8 +28,10 @@ router.delete(
   deleteSubtaskController,
 );
 
+router.get("/task/:taskId", authenticate, getSubtasksByTaskIdController);
+
 /* assigned users */
 
-router.patch("subtask/progress/:id",authenticate, updateSubtaskProgressController);
+router.patch("/progress/:id", authenticate, updateSubtaskProgressController);
 
 export default router;

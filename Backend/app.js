@@ -45,7 +45,7 @@ app.use('/api/notifications', notificationRoutes);
 app.use('/api/phases', phaseRoutes);
 app.use('/api/task-comments', taskCommentRoutes);
 app.use('/api/attachments', attachmentRoutes);
-app.use("/api", subtaskRoutes);
+app.use("/api/subtasks", subtaskRoutes);
 
 // Swagger UI -
 try {
