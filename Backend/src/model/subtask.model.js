@@ -1,4 +1,4 @@
-import db from "../config/db.js";
+import pool from "../config/db.js";
 
 export const createSubtask = async (data) => {
 
@@ -10,7 +10,7 @@ export const createSubtask = async (data) => {
     due_date
   } = data;
 
-  const [result] = await db.query(
+  const [result] = await pool.query(
     `INSERT INTO subtasks
     (task_id,title,description,start_date,due_date)
     VALUES (?,?,?,?,?)`,
@@ -24,7 +24,7 @@ export const updateSubtask = async (id, data) => {
 
   const { title, description, start_date, due_date } = data;
 
-  await db.query(
+  await pool.query(
     `UPDATE subtasks
      SET title=?, description=?, start_date=?, due_date=?
      WHERE id=?`,
@@ -35,7 +35,7 @@ export const updateSubtask = async (id, data) => {
 
 export const deleteSubtask = async (id) => {
 
-  await db.query(
+  await pool.query(
     `DELETE FROM subtasks WHERE id=?`,
     [id]
   );
@@ -44,18 +44,19 @@ export const deleteSubtask = async (id) => {
 
 export const updateSubtaskProgress = async (id, progress, status) => {
 
-  await db.query(
+  await pool.query(
     `UPDATE subtasks
      SET progress_percentage=?, status=?
      WHERE id=?`,
     [progress, status, id]
   );
+
 };
 
-export const getSubtaskByIdModel = async (id) => {
-  const [[subtask]] = await db.query(
-    `SELECT * FROM subtasks WHERE id = ?`,
-    [id]
+export const getSubtasksByTaskId = async (taskId) => {
+  const [rows] = await db.query(
+    `SELECT * FROM subtasks WHERE task_id = ? ORDER BY created_at DESC`,
+    [taskId]
   );
-  return subtask;
+  return rows;
 };
