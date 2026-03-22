@@ -4,6 +4,7 @@ import {
   uploadAttachment,
   getAttachments,
   deleteAttachment,
+  downloadAttachment
 } from "../controller/attachmentController.js";
 import { authenticate } from "../middleware/auth.middleware.js";
 import { authorizeRoles } from "../middleware/role.middleware.js";
@@ -14,7 +15,6 @@ router.post("/upload", authenticate, upload.single("file"), uploadAttachment);
 router.get(
   "/:id",
   authenticate,
-  authorizeRoles("Manager", "Admin"),
   getAttachments,
 );
 router.delete(
@@ -22,6 +22,11 @@ router.delete(
   authenticate,
   authorizeRoles("Manager", "Admin"),
   deleteAttachment,
+);
+router.get(
+  "/download/:id",
+  authenticate,
+  downloadAttachment
 );
 
 export default router;
