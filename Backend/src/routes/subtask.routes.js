@@ -32,6 +32,6 @@ router.get("/task/:taskId", authenticate, getSubtasksByTaskIdController);
 
 /* assigned users */
 
-router.patch("/progress/:id", authenticate, updateSubtaskProgressController);
+router.patch("/subtask/progress/:id", authenticate, updateSubtaskProgressController);
 
 export default router;
