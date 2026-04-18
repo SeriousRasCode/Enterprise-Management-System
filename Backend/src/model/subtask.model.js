@@ -54,7 +54,7 @@ export const updateSubtaskProgress = async (id, progress, status) => {
 };
 
 export const getSubtasksByTaskId = async (taskId) => {
-  const [rows] = await db.query(
+  const [rows] = await pool.query(
     `SELECT * FROM subtasks WHERE task_id = ? ORDER BY created_at DESC`,
     [taskId]
   );
