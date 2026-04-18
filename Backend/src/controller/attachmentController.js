@@ -89,7 +89,8 @@ export const downloadAttachment = async (req, res) => {
         const signedUrl = await getSignedUrl(s3Client, command, { expiresIn: 3600 });
 
         // Redirect user to the secure download link
-        res.redirect(signedUrl);
+        //res.redirect(signedUrl);
+        res.json({ signed_url: signedUrl });
     } catch (error) {
         res.status(500).json({ error: error.message });
     }

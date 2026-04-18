@@ -1,4 +1,4 @@
-import db from "../config/db.js";
+import pool from "../config/db.js";
 
 export const createPhase = async (data) => {
 
@@ -10,7 +10,7 @@ export const createPhase = async (data) => {
     end_date
   } = data;
 
-  const [result] = await db.query(
+  const [result] = await pool.query(
     `INSERT INTO project_phases
     (project_id,name,description,start_date,end_date)
     VALUES (?,?,?,?,?)`,

@@ -94,7 +94,7 @@ export const getTeamMembers = async (req, res) => {
     const userId = req.user.userId;
     const roles = req.user.roles || [];
 
-    // 🔐 If not admin → verify manager owns a project in this team
+    //  If not admin → verify manager owns a project in this team
     if (!roles.includes('admin')) {
       const [[project]] = await pool.query(
         `SELECT id 

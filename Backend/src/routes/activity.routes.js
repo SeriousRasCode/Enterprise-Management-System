@@ -2,7 +2,7 @@ import express from "express";
 import {
   getActivities,
   logActivity,
-} from "../controller/activityLog.controller.js";
+} from "../controller/activityLogcontroller.js";
 import { authenticate } from "../middleware/auth.middleware.js";
 import { authorizeRoles } from "../middleware/role.middleware.js";
 
