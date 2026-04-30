@@ -8,6 +8,7 @@ import {
 } from "../controller/subtask.controller.js";
 import { authenticate } from "../middleware/auth.middleware.js";
 import { authorizeRoles } from "../middleware/role.middleware.js";
+import pool from "../config/db.js";
 const router = express.Router();
 
 router.post(
@@ -15,6 +16,8 @@ router.post(
   authorizeRoles("Manager"),
     createSubtaskController,
 );
+
+router.get("/task/:taskId", authenticate, getSubtasksByTaskIdController);
 
 router.put(
   "/update-subtask/:id/:taskId", authenticate,
