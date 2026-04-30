@@ -23,10 +23,19 @@ import attachmentRoutes from "./src/routes/attachment.routes.js";
 import subtaskRoutes from "./src/routes/subtask.routes.js"
 
 const app = express();
+// app.use(cors({
+//   origin: "http://localhost:5173",
+//   credentials: true // Later we will adjust this to our frontend URL
+// }));
+
 app.use(cors({
-  origin: "http://localhost:5173",
-  credentials: true // Later we will adjust this to our frontend URL
+  origin: true, // Reflects the request origin
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization']
 }));
+
+
 
 app.use(express.json());
 app.use('/api/auth', authRoutes);
@@ -45,7 +54,8 @@ app.use('/api/notifications', notificationRoutes);
 app.use('/api/phases', phaseRoutes);
 app.use('/api/task-comments', taskCommentRoutes);
 app.use('/api/attachments', attachmentRoutes);
-app.use("/api/subtasks", subtaskRoutes);
+app.use("/api", subtaskRoutes);
+app.use("/api/subtasks", subtaskRoutes); 
 
 // Swagger UI -
 try {
