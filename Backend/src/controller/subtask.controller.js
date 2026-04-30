@@ -8,6 +8,7 @@ import {
 import { getTaskAssignmentsModel } from "../model/taskAssignment.model.js";
 
 import { triggerEvent } from "../utils/eventEngine.js";
+import pool from "../config/db.js";
 
 export const createSubtaskController = async (req, res) => {
 
