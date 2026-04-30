@@ -21,7 +21,8 @@ export const createTask = async (req, res) => {
       start_date,
       due_date,
       status,
-      progress_percentage
+      progress_percentage,
+      phase_id
     } = req.body;
 
     // validation
@@ -41,7 +42,8 @@ export const createTask = async (req, res) => {
       start_date,
       due_date,
       status,
-      progress_percentage
+      progress_percentage,
+      phase_id
     );
 await updateProjectProgressModel(projectId);
 
