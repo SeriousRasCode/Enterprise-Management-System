@@ -7,12 +7,13 @@ export const createTaskModel = async (
   start_date,
   due_date,
   status,
-  progress_percentage
+  progress_percentage,
+   phase_id = null
 ) => {
   const [result] = await pool.query(
     `INSERT INTO tasks 
-     (project_id, title, description, start_date, due_date, status, progress_percentage)
-     VALUES (?, ?, ?, ?, ?, ?, ?)`,
+     (project_id, title, description, start_date, due_date, status, progress_percentage,phase_id)
+     VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
     [
       projectId,
       title,
@@ -20,7 +21,8 @@ export const createTaskModel = async (
       start_date,
       due_date,
       status,
-      progress_percentage
+      progress_percentage,
+      phase_id
     ]
   );
 
