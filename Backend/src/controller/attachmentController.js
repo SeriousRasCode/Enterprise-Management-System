@@ -228,27 +228,27 @@ export const deleteAttachment = async (req, res) => {
     }
 };
 
-export const getAttachments = async (req, res) => {
-  try {
-    const { id } = req.params; // This 'id' could be project_id, task_id, etc.
+// export const getAttachments = async (req, res) => {
+//   try {
+//     const { id } = req.params; // This 'id' could be project_id, task_id, etc.
     
-    // Note: Changed 'db' to 'pool' to match your database config import
-    const [rows] = await pool.query(
-      `SELECT 
-        a.*,
-        u.full_name as uploaded_by_name
-      FROM attachments a
-      LEFT JOIN users u ON a.uploaded_by = u.id
-      WHERE a.project_id = ? 
-         OR a.task_id = ? 
-         OR a.subtask_id = ? 
-      ORDER BY a.uploaded_at DESC`,
-      [id, id, id]
-    );
+//     // Note: Changed 'db' to 'pool' to match your database config import
+//     const [rows] = await pool.query(
+//       `SELECT 
+//         a.*,
+//         u.full_name as uploaded_by_name
+//       FROM attachments a
+//       LEFT JOIN users u ON a.uploaded_by = u.id
+//       WHERE a.project_id = ? 
+//          OR a.task_id = ? 
+//          OR a.subtask_id = ? 
+//       ORDER BY a.uploaded_at DESC`,
+//       [id, id, id]
+//     );
 
-    res.json(rows);
-  } catch (error) {
-    console.error("GET ATTACHMENTS ERROR:", error);
-    res.status(500).json({ error: error.message });
-  }
-};
+//     res.json(rows);
+//   } catch (error) {
+//     console.error("GET ATTACHMENTS ERROR:", error);
+//     res.status(500).json({ error: error.message });
+//   }
+// };
