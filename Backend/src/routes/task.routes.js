@@ -9,7 +9,7 @@ const router = express.Router();
  router.get(
    "/:taskId/history",
    authenticate,
-   authorizeRoles("Member"),
+   authorizeRoles("Member", "Manager", "Admin"),
    async (req, res) => {
      try {
        const { taskId } = req.params;
