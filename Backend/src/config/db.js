@@ -1,6 +1,6 @@
-import mysql from 'mysql2/promise';
-import dotenv from 'dotenv';
-const config = dotenv.config();
+// import mysql from 'mysql2/promise';
+// import dotenv from 'dotenv';
+// const config = dotenv.config();
 
 // const pool = mysql.createPool({
 //     host: process.env.DB_HOST ,
@@ -22,6 +22,24 @@ const config = dotenv.config();
 
 // local version
 
+// // Test the connection on startup
+// try {
+//     const connection = await pool.getConnection();
+//     console.log('✅ Connected to Aiven MySQL Pool successfully!');
+//     connection.release(); 
+// } catch (err) {
+//     console.error('❌ Database connection failed:', err.message);
+// }
+// export default pool;
+
+
+
+import mysql from "mysql2/promise";
+import dotenv from "dotenv";
+
+dotenv.config();
+
+// Create a pool for better performance
 const pool = mysql.createPool({
     host: "localhost" ,
     user: "root" ,
@@ -31,12 +49,15 @@ const pool = mysql.createPool({
     connectionLimit: 10,
     queueLimit: 0
 });
-// Test the connection on startup
-try {
-    const connection = await pool.getConnection();
-    console.log('✅ Connected to Aiven MySQL Pool successfully!');
-    connection.release(); 
-} catch (err) {
-    console.error('❌ Database connection failed:', err.message);
-}
+
+// Test connection (optional)
+(async () => {
+    try {
+        const [rows] = await pool.query("SELECT 1 + 1 AS result");
+        console.log("✅ Database connected successfully, test result:", rows[0].result);
+    } catch (error) {
+        console.error("❌ Database connection failed:", error.message);
+    }
+})();
+
 export default pool;
