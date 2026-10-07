@@ -186,7 +186,13 @@ For a production deployment, consider:
 - ⚙️ CI/CD pipeline setup
 - 🚦 API rate limiting and security optimization
 
-## 📄 License
+## � Contributors
+
+- Shambel Dechu
+- Tedros Teshome
+- Bonsa Adugna
+
+## �📄 License
 
 This project is intended for internal or educational use unless otherwise specified by the project owner.
 
