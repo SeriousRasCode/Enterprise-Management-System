@@ -1,4 +1,5 @@
 /Backend/node_modules/
 /Backend/.env
 /Backend/package-lock.json
+Frontend/
 /deboPTMS

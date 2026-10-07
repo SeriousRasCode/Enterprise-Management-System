@@ -1,50 +1,118 @@
-# Welcome to your Expo app 👋
+# Debo App Mobile
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+The Debo App is the mobile client for the Enterprise Management System. It provides a streamlined experience for employees, managers, and administrators to access tasks, view project information, and manage work from a mobile device.
 
-## Get started
+## Overview
 
-1. Install dependencies
+This application is built with Expo and React Native to deliver a fast, responsive mobile interface for a modern enterprise workflow. It connects to the backend API to authenticate users, fetch dashboard data, manage project information, and update task progress.
 
-   ```bash
-   npm install
-   ```
+## Core Features
 
-2. Start the app
+- User login and session handling
+- Role-aware mobile screens
+- Dashboard overview
+- Project and task browsing
+- Task progress updates
+- Notification viewing
+- Responsive and mobile-friendly UI
+- Connection to backend API services
 
-   ```bash
-   npx expo start
-   ```
+## Tech Stack
 
-In the output, you'll find options to open the app in a
+- Expo
+- React Native
+- React Navigation
+- Axios
+- AsyncStorage
+- Zustand
+- Expo Router
 
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
+## Project Structure
 
-You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
-
-## Get a fresh project
-
-When you're ready, run:
-
-```bash
-npm run reset-project
+```text
+Mobile/deboApp/
+├── app/
+├── assets/
+├── components/
+├── constants/
+├── hooks/
+├── scripts/
+├── src/
+├── app.json
+├── app.config.js
+├── package.json
+├── tsconfig.json
+├── eslint.config.js
+└── README.md
 ```
 
-This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
+## Prerequisites
 
-## Learn more
+Before running the project, make sure you have:
 
-To learn more about developing your project with Expo, look at the following resources:
+- Node.js 18+
+- npm
+- Expo CLI
+- Android Studio or iOS Simulator
+- A running backend API instance
 
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
+## Installation
 
-## Join the community
+```bash
+cd Mobile/deboApp
+npm install
+```
 
-Join our community of developers creating universal apps.
+## Run the App
 
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+Start the development server:
+
+```bash
+npx expo start
+```
+
+You can then open the app in:
+
+- Expo Go on a physical Android or iOS device
+- Android emulator
+- iOS simulator
+- Web preview if supported by your environment
+
+## API Configuration
+
+Set the API base URL for the backend before running the app. Usually this is the local backend address:
+
+```text
+http://<your-local-ip>:3333/api
+```
+
+If your app uses environment variables, add them to a suitable config file or app config before launching the project.
+
+## Typical User Workflow
+
+1. User signs in
+2. Session token is stored locally
+3. Dashboard data loads from the backend
+4. User reviews assigned work and project updates
+5. Task completion or progress changes are sent back to the API
+
+## Development Notes
+
+- Keep API URLs consistent across environments
+- Test login and token refresh flows carefully
+- Handle network errors and offline states gracefully
+- Prefer reusable components for dashboard and task UI
+
+## Production Considerations
+
+For release builds, review:
+
+- secure authentication flow
+- environment-specific API endpoints
+- app signing and certificates
+- performance optimization
+- release notes and versioning
+
+## Related Project
+
+This mobile application is designed to work with the backend service in the `Backend/` directory and is part of the broader Enterprise Management System.

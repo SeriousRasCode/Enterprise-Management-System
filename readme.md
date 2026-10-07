@@ -1,56 +1,195 @@
-# 🚀 Project & Task Management System (PTMS)
+# 🚀 Enterprise Management System
 
-### What is this?
-A digital platform built to replace old-school Excel sheets and paper tracking. It helps companies manage teams, plan projects, and track task progress (0-100%) in real-time.
+A full-stack enterprise platform for managing projects, tasks, teams, reports, notifications, and user access across an organization. The system is designed to centralize operational workflows, improve visibility, and support collaboration between administrators, project managers, and employees.
 
-### Core Features
-* **Role-Based Access:** Specific views for **Admin**, **Project Manager**, and **Employee**.
-* **Project Tracking:** Managers create projects and assign tasks.
-* **Task Updates:** Employees can update task status and percentage via a slider.
-* **Cross-Platform:** Shared logic for **Web** and **Mobile** support.
+## 📌 Overview
 
----
+The Enterprise Management System helps businesses:
 
-### 📂 Folder Structure (The Architecture)
-We used a "Type-Based" structure to keep things organized and scalable:
-* `src/screens/`: Pages grouped by user role (Admin, Manager, Employee).
-* `src/components/`: Reusable UI pieces (Cards, Buttons, Progress Bars).
-* `src/services/`: API logic and data fetching (Axios).
-* `src/utils/`: Helper functions (date formatting, percentage math).
-* `src/types/`: TypeScript interfaces for better code safety.
+- 👥 Manage users, teams, and roles
+- 📁 Create and track projects through lifecycle stages
+- ✅ Assign tasks and subtasks to team members
+- 📊 Monitor progress with status updates and reporting
+- 💬 Capture comments, attachments, and activity history
+- 🔔 Send notifications and support operational reporting
+- 🔐 Provide role-based access across different user groups
 
----
+## ✨ Core Features
 
-### 🛠 Tech Stack
-* **Frontend:** React Native + Expo + TypeScript.
-* **Navigation:** React Navigation (Stack).
-* **Backend:**  Node.js / Express / MySql.
-* **API:** Axios
-* **Icons:** Lucide-react-native.
+- 🛡️ Role-based authentication and authorization
+- 🧑‍💼 Admin dashboard and user management
+- 👥 Team and project management
+- 🧩 Task and subtask assignment workflows
+- 📈 Real-time progress tracking and milestone updates
+- 🗂️ Commenting and file attachment support
+- 📉 Dashboard analytics and reporting
+- 🔔 Notification system for updates and reminders
+- 🗄️ MySQL-backed persistence with structured API endpoints
+- 📱 Mobile-first experience using Expo and React Native
 
----
+## 🏗️ System Architecture
 
-### 🚀 How to Run (Mobile & Web)
+The project is split into two active application layers:
 
-1. **Install dependencies:**
-   ```bash
-   npm install
+1. Backend API
+   - Node.js
+   - Express.js
+   - MySQL
+   - JWT authentication
+   - Swagger/OpenAPI documentation
 
-2. **Start the Expo server:**
-   ```bash
-   npx expo start
+2. Mobile Client
+   - Expo
+   - React Native
+   - React Navigation
+   - Axios API integration
 
-3. **Open the app:**
-    * **Mobile:** Scan the QR code with the **Expo Go** app.
-    * **Web:** Press `w` in the terminal to launch in browser.
+## 📁 Repository Structure
 
-### 📝 User Roles
-| Role | Permissions |
-| :--- | :--- |
-| **Admin** | Manage users, roles, and create teams. |
-| **Manager** | Create projects and assign tasks to employees. |
-| **Employee** | View assigned tasks and update completion %. |
+```text
+Enterprise-Management-System/
+├── Backend/                 # Core API server and business logic
+│   ├── src/
+│   ├── app.js
+│   ├── server.js
+│   ├── package.json
+│   └── backend.md
+├── Mobile/
+│   └── deboApp/             # Expo mobile application
+├── .gitignore
+├── readme.md
+├── Github.guidlines.html
+└── Frontend/               # Local-only frontend copy for reference
+```
 
----
+## 🧰 Tech Stack
 
+### Backend
 
+- ⚙️ Node.js
+- 🚀 Express.js
+- 🗄️ MySQL2
+- 🔐 JWT
+- 📤 Multer
+- 📧 Nodemailer / SendinBlue integration
+- 📘 Swagger UI
+- 🌐 CORS and rate-limiting support
+
+### Mobile App
+
+- 📱 Expo
+- ⚛️ React Native
+- 🧭 React Navigation
+- 🌐 Axios
+- 💾 AsyncStorage
+- 🧠 Zustand for state management
+
+## 👤 User Roles
+
+| Role            | Responsibilities                                                |
+| --------------- | --------------------------------------------------------------- |
+| Admin           | Manage users, teams, permissions, and platform-level operations |
+| Project Manager | Create and oversee projects, assign tasks, and monitor progress |
+| Employee        | View assignments, update task progress, and collaborate on work |
+
+## ✅ Prerequisites
+
+Before running the project, ensure the following are installed:
+
+- 🟢 Node.js 18+
+- 📦 npm or yarn
+- 🗄️ MySQL database
+- 📱 Expo CLI for the mobile app
+- 🧪 Android Studio or Xcode for native emulation, if needed
+
+## ⚙️ Backend Setup
+
+1. Open the backend folder:
+
+```bash
+cd Backend
+```
+
+2. Install dependencies:
+
+```bash
+npm install
+```
+
+3. Create a `.env` file based on your environment settings:
+
+```env
+PORT=3333
+DB_HOST=localhost
+DB_USER=root
+DB_PASSWORD=your_password
+DB_NAME=enterprise_management_system
+JWT_SECRET=your_super_secret_key
+SMTP_HOST=smtp.example.com
+SMTP_PORT=587
+SMTP_USER=your_email
+SMTP_PASS=your_email_password
+```
+
+4. Start the API server:
+
+```bash
+node server.js
+```
+
+5. Access the API documentation:
+
+```text
+http://localhost:3333/api/docs
+```
+
+## 📱 Mobile App Setup
+
+1. Open the mobile application folder:
+
+```bash
+cd Mobile/deboApp
+```
+
+2. Install dependencies:
+
+```bash
+npm install
+```
+
+3. Start the Expo development server:
+
+```bash
+npx expo start
+```
+
+4. Launch the app using:
+
+- Android emulator
+- iOS simulator
+- Expo Go on a physical device
+
+If the backend is running on a local machine, make sure the mobile app points to the correct API URL, typically:
+
+```text
+http://<your-local-ip>:3333/api
+```
+
+## 🚀 Production Considerations
+
+For a production deployment, consider:
+
+- 🔒 Environment-specific configuration
+- 🛡️ Secure secret management
+- 💾 Database backups and monitoring
+- 🌐 HTTPS and reverse proxy configuration
+- ⚙️ CI/CD pipeline setup
+- 🚦 API rate limiting and security optimization
+
+## 📄 License
+
+This project is intended for internal or educational use unless otherwise specified by the project owner.
+
+## 📬 Contact
+
+For setup help, architecture questions, or deployment support, contact the project maintainer or repository owner.
